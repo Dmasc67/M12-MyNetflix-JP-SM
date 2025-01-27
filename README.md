@@ -1,88 +1,89 @@
-# 🎥 MyNetflix - Activitat 9
+# 🎥 **MyNetflix**  
+*Activitat 9 - Disseny i Desenvolupament d'una Plataforma de Vídeo en Streaming*  
 
-## 🏆 Objectiu  
-Crear un lloc web per a una plataforma de vídeo en streaming amb les següents funcionalitats:
-
-- 🌟 **Part pública:** Mostrar continguts destacats amb un TOP 5 i una graella de pel·lícules ordenades per popularitat (segons el número de "likes").
-- 🔒 **Entorn privat:** 
-  - **Administrador:** Gestió d'usuaris, catàleg i estadístiques.
-  - **Clients registrats:** Realitzar "likes", cercar i filtrar pel·lícules.
-
----
-
-## 🕒 Temporització  
-⏳ **Durada estimada:** 15 hores  
+## 📌 **Objectiu**  
+Crear un lloc web per a una plataforma de vídeo en streaming amb les següents funcionalitats:  
+- 🌟 **Part pública**: Mostra continguts destacats (TOP 5) i un catàleg ordenat per popularitat. Permet registrar-se i loguejar-se.  
+- 🔒 **Part privada**:  
+  - 🎛️ Administradors: Gestionen el catàleg i els usuaris.  
+  - 👤 Usuaris loguejats: Poden donar "likes" i utilitzar cercadors i filtres avançats.  
 
 ---
 
-## 🏫 Organització  
-- **Metodologia:** Activitat pràctica.  
-- **Agrupació d’alumnes:** Treball en parelles.  
+## ⏳ **Temporització**  
+🕒 15 hores  
 
 ---
 
-## 📋 Descripció de l'activitat  
-
-### 🌐 **Part pública:**  
-1. **TOP 5 pel·lícules:** En una única fila destacada.  
-2. **Graella de pel·lícules:** Mostra de totes les pel·lícules disponibles, ordenades per popularitat (número de "likes").  
-3. **Funcionalitats addicionals:**  
-   - Formulari de **login** per accedir a l’entorn privat.  
-   - Formulari de **registre:** Requereix validació per part de l’administrador.
+## 🏫 **Organització de l'espai**  
+- **Metodologia**: Activitat pràctica  
+- **Agrupació d'alumnes**: Treball en parelles  
 
 ---
 
-### 🔐 **Part privada:**  
+## 📝 **Descripció de l'activitat**  
 
-#### 🎩 **Administrador:**  
-- **Gestió d’usuaris:**  
-  - Validar nous usuaris.  
-  - Activar o desactivar usuaris registrats.  
-- **Gestió de pel·lícules:**  
-  - Veure el catàleg en una taula ordenable per nom o "likes".  
-  - Afegir, eliminar o modificar pel·lícules.  
-  - Cercador ràpid de pel·lícules (amb filtres).  
+### 🌐 **1. Part pública**  
+1. Mostrar un **TOP 5** en una única fila.  
+2. Afegir un **grid** amb les pel·lícules disponibles, ordenades per popularitat segons el nombre de "likes".  
+3. Incloure:  
+   - 🖊️ **Login**: Accés a l'entorn privat.  
+   - 🆕 **Registre**: Validació d'usuaris nous per part de l'administrador.  
 
-#### 👤 **Client registrat:**  
-- Afegir o treure "likes" a pel·lícules.  
-- Filtrar pel·lícules en funció de "likes" propis o d'altres usuaris.  
-- Utilitzar cercadors avançats amb filtres múltiples.  
+### 🔐 **2. Part privada**  
 
----
+#### 🛠️ **2.1. Usuari administrador**  
+- **Gestió d'usuaris**:  
+  - ✅ Validar nous registres.  
+  - 🔄 Activar/desactivar usuaris.  
 
-## 🛠️ A tenir en compte  
-- **Responsive Design:** Mobile first, prototipus adaptat a diferents dispositius.  
-- **Base de dades:** Adequada per gestionar usuaris i pel·lícules.  
-- **Connexions segures:** Ús de PDO amb validacions, `BindParams`, control de transaccions, etc.  
-- **AJAX:** Per gestionar usuaris, filtres i "likes".  
-- **Pòsters:** Opció de pujar caràtules de pel·lícules al servidor.  
-- **Control de versions:** Projecte ben documentat a GitHub amb **README**, **roadmap**, **issues** i ús correcte de branques.  
+- **Gestió de pel·lícules**:  
+  - 📋 Veure catàleg en una taula ordenable (per nom o "likes").  
+  - ➕ Afegir o 🗑️ eliminar pel·lícules.  
+  - ✏️ Modificar dades de pel·lícules.  
+  - 🔍 Cercador ràpid amb filtres.  
 
----
-
-## 📊 Avaluació  
-
-| **Criteri**                                | **Punts** |
-|-------------------------------------------|-----------|
-| 🎨 Disseny i prototipus responsius        | 15%       |
-| 🗃️ Base de dades adequada                 | 10%       |
-| 🔒 Connexions segures                     | 10%       |
-| 🔄 Control de transaccions                | 10%       |
-| ⚡ Ús d’AJAX per usuaris, filtres i likes | 30%       |
-| 🖼️ Gestió de pòsters                     | 15%       |
-| 🛠️ GitHub complet i ben estructurat      | 10%       |
+#### 🎬 **2.2. Usuari client**  
+- ❤️ Posar o treure "likes" a les pel·lícules.  
+- 🔄 Filtrar pel·lícules per "likes" de l'usuari.  
+- 🔎 Cercador avançat amb múltiples criteris.  
 
 ---
 
-## 📚 Recursos  
-- Materials d’estudi del **Moodle del Mòdul 7**.  
+## ❗ **A tenir en compte**  
+- 📱 **Responsive design**: Mobile first amb prototips per a diversos dispositius.  
+- 🗂️ **BBDD adequada**: Gestió d'usuaris i pel·lícules.  
+- 🔒 **Connexions segures**: PDO, Statements, BindParams, validacions.  
+- 🔁 **Control de transaccions**: Gestió segura per eliminar pel·lícules i "likes".  
+- ⚡ **AJAX**: Per a la creació d'usuaris, filtres i gestió de "likes".  
+- 🖼️ **Posters**: Pujar arxius al servidor.  
+- 💻 **GitHub**: Amb roadmap, issues, branques i un readme detallat.  
 
 ---
 
-## 🧑‍🏫 Rol del docent  
-- Atendre dubtes durant el desenvolupament de l’activitat.  
-- Avaluar el projecte segons els criteris establerts.
+## 📚 **Recursos**  
+- 📖 Materials d'estudi del Moodle (Mòdul 7).  
 
 ---
 
-💡 **Nota:** Recordeu treballar en equip, planificar correctament el vostre temps i revisar el projecte abans de la seva entrega. 🚀  
+## 📝 **Avaluació de l'activitat**  
+
+| **Aspecte**                          | **Punts** |  
+|--------------------------------------|-----------|  
+| 🎨 **Disseny i prototipus**           | 15%       |  
+| 🗂️ **BBDD adequada**                  | 10%       |  
+| 🔒 **Connexions segures**             | 10%       |  
+| 🔁 **Control de transaccions**        | 10%       |  
+| ⚡ **AJAX i interaccions**            | 30%       |  
+| 🖼️ **Posters (arxius al servidor)**   | 15%       |  
+| 💻 **GitHub i documentació**          | 10%       |  
+
+---
+
+## 👥 **Integrants de l'equip**  
+- **Juan Carlos Prado Garcia**  
+- **Sergi Masip Manchado**  
+
+---
+
+🚀 **Endavant amb el desenvolupament!** 🎉  
