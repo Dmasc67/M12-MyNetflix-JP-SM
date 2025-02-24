@@ -1,80 +1,264 @@
-.top5 {
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #141414;
+    color: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Encabezado */
+.header {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
+    align-items: center;
     padding: 20px;
+    background-color: #000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #e50914; /* Rojo Netflix */
+}
+
+.auth-icon i {
+    margin-left: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.auth-icon i:hover {
+    color: #e50914;
+}
+
+/* Top 5 Películas */
+/* Top 5 Películas */
+.top5 {
+    padding: 20px;
+    background-color: #1c1c1c;
+    margin-bottom: 20px;
+}
+
+.top5 h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    padding-left: 20px;
 }
 
 .top5 .row {
     display: flex;
-    width: 100%; 
+    gap: 100px;
+    overflow-x: auto;
+    padding: 0 20px 20px 20px; /* Padding para evitar que las películas toquen los bordes */
+    scrollbar-width: thin; /* Para navegadores que soportan scrollbar personalizada */
+    scrollbar-color: #e50914 #1c1c1c; /* Color del scroll */
+}
+
+.top5 .row::-webkit-scrollbar {
+    height: 8px; /* Altura del scrollbar */
+}
+
+.top5 .row::-webkit-scrollbar-thumb {
+    background-color: #e50914; /* Color del thumb */
+    border-radius: 4px;
+}
+
+.top5 .row::-webkit-scrollbar-track {
+    background-color: #1c1c1c; /* Color del track */
 }
 
 .top5 .col {
-    flex: 1; 
-    margin: 0 10px; 
+    flex: 0 0 auto;
+    width: 200px;
     text-align: center;
+    transition: transform 0.3s ease;
 }
 
 .top5 img {
-    width: 100% !important; 
-    height: 200px !important;
-    object-fit: cover !important; 
+    width: 100%;
     border-radius: 10px;
+    transition: transform 0.3s ease;
 }
 
-.top5 img,
-.grid-peliculas img {
-    width: 150px; 
-    height: 200px; 
-    object-fit: cover; 
+.top5 img:hover {
+    transform: scale(1.05);
 }
 
-.header {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    padding: 10px 20px; 
-    background-color: #ff0000; 
-    color: #fff; 
+.top5 h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
 }
 
-.auth-icons a {
-    margin-left: 15px; 
+/* Filtros */
+h3 {
+    font-size: 1.5rem;
+    margin: 20px;
 }
 
-.auth-icons img {
-    width: 30px; 
-    height: auto; 
+select, input[type="text"], input[type="number"] {
+    padding: 10px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+    width: 200px;
 }
 
-.auth-icon i {
-    font-size: 30px;
-    color: #fff; 
-    cursor: pointer; 
+select:focus, input[type="text"]:focus, input[type="number"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px #e50914;
 }
 
+/* Películas Disponibles */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Columnas automáticas con un mínimo de 200px */
+    gap: 20px;
+    padding: 20px;
+}
+
+.grid-col {
+    background-color: #1c1c1c;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.grid-col:hover {
+    transform: scale(1.05);
+}
+
+.grid-col img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+}
+
+.grid-col h3 {
+    margin: 10px 0;
+    font-size: 1.2rem;
+}
+
+.btn-like {
+    background-color: #e50914;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.btn-like.liked {
+    background-color: #4CAF50; /* Verde para indicar que ya le gusta */
+}
+
+.btn-like:hover {
+    background-color: #ff0000;
+}
+
+/* Modal de Login */
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1; 
+    display: none;
+    position: fixed;
+    z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: auto; 
+    background-color: #1c1c1c;
     padding: 20px;
-    border: 1px solid #888;
+    border-radius: 10px;
     width: 300px;
-    position: absolute;
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
+    text-align: center;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 10px;
+    background-color: #e50914;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #ff0000;
+}
+
+.modal-content .close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .top5 .col, .grid-col {
+        width: 150px;
+    }
+
+    .grid-col img {
+        height: 200px;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .auth-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .top5 .col, .grid-col {
+        width: 120px;
+    }
+
+    .grid-col img {
+        height: 150px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .auth-icon i {
+        font-size: 1.2rem;
+    }
 }
 
