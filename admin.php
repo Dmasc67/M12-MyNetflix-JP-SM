@@ -33,6 +33,9 @@ $moviesResult = $pdo->query($moviesQuery);
         <a href="index.php"><h1>MyNetflix - Administración</h1></a>
         <div class="auth-icon">
             <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="index.php" title="Volver a la página anterior">
+                    <i class="fas fa-arrow-left" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de volver -->
+                </a>
                 <a href="logout.php" title="Cerrar Sesión">
                     <i class="fas fa-sign-out-alt" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de logout -->
                 </a>

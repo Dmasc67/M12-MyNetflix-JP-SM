@@ -82,15 +82,15 @@ if (isset($_GET['filter'])) {
 <div class="header">
     <h1>MyNetflix</h1>
     <div class="auth-icon">
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="logout.php" title="Cerrar Sesión">
-                <i class="fas fa-sign-out-alt" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de logout -->
-            </a>
-            <?php if ($_SESSION['user_role'] === 'admin'): ?>
+    <?php if ($_SESSION['user_role'] === 'admin'): ?>
                 <a href="admin.php" title="Panel de Administración">
                     <i class="fas fa-tools" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de herramientas -->
                 </a>
-            <?php endif; ?>
+            <?php endif; ?>    
+    <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="logout.php" title="Cerrar Sesión">
+                <i class="fas fa-sign-out-alt" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de logout -->
+            </a>
         <?php else: ?>
             <i class="fas fa-user" title="Iniciar Sesión" id="loginIcon" onclick="toggleModal()"></i> <!-- Ícono de login -->
         <?php endif; ?>
