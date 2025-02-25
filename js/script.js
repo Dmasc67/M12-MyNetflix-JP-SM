@@ -11,6 +11,11 @@ window.onclick = function(event) {
     }
 }
 
+function closeMovieModal() {
+    document.getElementById('movieModal').style.display = 'none';
+    clearInterval(intervalId);
+}
+
 function openMovieModal(movieId) {
     let isLikedByUser = false; // Variable para guardar el estado del like del usuario
 
@@ -116,10 +121,11 @@ function openMovieModal(movieId) {
 
             // Manejar cierre del modal
             const closeButton = document.querySelector('.close');
-            closeButton.onclick = function () {
-                document.getElementById('movieModal').style.display = 'none';
-                clearInterval(intervalId);
-            };
+            if (closeButton) {
+                closeButton.onclick = closeMovieModal;
+            } else {
+                console.error('El botón de cierre no se encontró en el DOM.');
+            }
         })
         .catch(error => console.error('Error al obtener la información de la película:', error));
 }
