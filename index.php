@@ -132,12 +132,12 @@ if (isset($_GET['filter'])) {
         <img src="./img/peliculas/<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>" onclick="openMovieModal(<?php echo $movie['id']; ?>)">
         <h3><?php echo $movie['titulo']; ?></h3>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <p>
+            <!-- <p>
                 <button class="btn btn-like <?php echo ($movie['user_like'] > 0) ? 'liked' : ''; ?>" 
                         data-id="<?php echo $movie['id']; ?>">
                     👍<span class="like-count" id="like-count-<?php echo $movie['id']; ?>"><?php echo $movie['likes']; ?></span>
                 </button>
-            </p>
+            </p> -->
         <?php endif; ?>
     </div>
 <?php endforeach; ?>
@@ -180,10 +180,13 @@ if (isset($_GET['filter'])) {
         <p id="modal-directors"></p>
         <p id="modal-actors"></p>
         <p id="modal-categories"></p>
-        <p id="modal-likes"></p>
+        <p>
+        <button id="modal-like-button" class="btn-like" data-id="">
+            👍 <span id="modal-like-count"></span>
+        </button>
+        </p>
     </div>
 </div>
-
 
 <script src="js/script.js"></script>
 <script src="js/like.js"></script>
