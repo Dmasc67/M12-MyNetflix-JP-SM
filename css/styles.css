@@ -168,9 +168,9 @@ select:focus, input[type="text"]:focus, input[type="number"]:focus {
     background-color: #ff0000;
 }
 
-/* Modal de Login */
+/* Modal de Login y Modal de Información de Película */
 .modal {
-    display: none;
+    display: none; /* Ocultar por defecto */
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -178,51 +178,57 @@ select:focus, input[type="text"]:focus, input[type="number"]:focus {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    display: flex; /* Activar flexbox para centrado */
 }
 
 .modal-content {
     background-color: #1c1c1c;
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
-    text-align: center;
+    width: 80%; /* Ajusta el ancho según necesites */
+    max-width: 800px; /* Limita el ancho máximo */
+    text-align: left; /* Alinea el texto a la izquierda */
+    position: relative; /* Para posicionar el botón de cierre */
+}
+
+.modal-body {
+    display: flex;
+    gap: 20px; /* Espacio entre la imagen y la información */
+}
+
+.modal-image-container {
+    flex: 1; /* Ocupa el espacio disponible */
+    display: flex;
+    justify-content: flex-start; /* Alinea la imagen a la izquierda */
+}
+
+.modal-info {
+    flex: 1; /* Ocupa el espacio disponible */
+}
+
+.modal-image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
 }
 
 .modal-content h2 {
     margin-bottom: 20px;
 }
 
-.modal-content input {
-    width: 100%;
-    padding: 10px;
+.modal-content p {
     margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-    background-color: #333;
-    color: #fff;
-}
-
-.modal-content button {
-    width: 100%;
-    padding: 10px;
-    background-color: #e50914;
-    border: none;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.modal-content button:hover {
-    background-color: #ff0000;
 }
 
 .modal-content .close {
-    float: right;
+    position: absolute;
+    top: 10px;
+    right: 10px;
     font-size: 1.5rem;
     cursor: pointer;
+    color: #fff;
 }
 
 /* Responsive Design */

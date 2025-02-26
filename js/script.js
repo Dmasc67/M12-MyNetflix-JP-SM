@@ -1,21 +1,15 @@
+// Función para abrir/cerrar el modal de login
 function toggleModal() {
     var modal = document.getElementById("loginModal");
-    modal.style.display = (modal.style.display === "block") ? "none" : "block";
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
 }
 
-
-window.onclick = function(event) {
-    var modal = document.getElementById("loginModal");
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
+// Función para cerrar el modal de película
 function closeMovieModal() {
     document.getElementById('movieModal').style.display = 'none';
-    clearInterval(intervalId);
 }
 
+// Función para abrir el modal de película con datos dinámicos
 function openMovieModal(movieId) {
     fetch(`get_movie_info.php?id=${movieId}`)
         .then(response => response.json())
@@ -36,16 +30,40 @@ function openMovieModal(movieId) {
             const categorias = data.categorias.join(', ');
             document.getElementById('modal-categories').innerText = `Categorías: ${categorias}`;
 
-            document.getElementById('movieModal').style.display = 'block';
-
-            const closeButton = document.querySelector('.close');
-            if (closeButton) {
-                closeButton.onclick = () => {
-                    closeMovieModal();
-                };
-            } else {
-                console.error('El botón de cierre no se encontró en el DOM.');
-            }
+            // Mostrar el modal de película
+            document.getElementById('movieModal').style.display = 'flex';
         })
         .catch(error => console.error('Error al obtener la información de la película:', error));
 }
+
+// Cerrar modales al hacer clic fuera del contenido
+window.onclick = function(event) {
+    var loginModal = document.getElementById("loginModal");
+    var movieModal = document.getElementById("movieModal");
+
+    if (event.target == loginModal) {
+        loginModal.style.display = "none";
+    }
+    if (event.target == movieModal) {
+        movieModal.style.display = "none";
+    }
+}
+
+// Asignar eventos de cierre a los botones de cerrar
+document.addEventListener('DOMContentLoaded', function() {
+    // Cerrar modal de login
+    const loginCloseButton = document.querySelector('#loginModal .close');
+    if (loginCloseButton) {
+        loginCloseButton.onclick = () => {
+            document.getElementById('loginModal').style.display = 'none';
+        };
+    }
+
+    // Cerrar modal de película
+    const movieCloseButton = document.querySelector('#movieModal .close');
+    if (movieCloseButton) {
+        movieCloseButton.onclick = () => {
+            closeMovieModal();
+        };
+    }
+});

@@ -155,7 +155,7 @@ if (isset($_GET['filter'])) {
 <?php endif; ?>
 
 <!-- Modal de Login -->
-<div id="loginModal" class="modal">
+<div id="loginModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
         <h2>Iniciar Sesión</h2>
@@ -169,17 +169,25 @@ if (isset($_GET['filter'])) {
 </div>
 
 <!-- Modal de Información de Película -->
-<div id="movieModal" class="modal">
+<div id="movieModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="closeMovieModal()">&times;</span>
-        <h2 id="modal-title"></h2>
-        <img id="modal-image" src="" alt="">
-        <p id="modal-description"></p>
-        <p id="modal-year"></p>
-        <p id="modal-duration"></p>
-        <p id="modal-directors"></p>
-        <p id="modal-actors"></p>
-        <p id="modal-categories"></p>
+        <div class="modal-body">
+            <!-- La imagen ahora está primero (izquierda) -->
+            <div class="modal-image-container">
+                <img id="modal-image" src="" alt="">
+            </div>
+            <!-- La información ahora está después (derecha) -->
+            <div class="modal-info">
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+                <p id="modal-year"></p>
+                <p id="modal-duration"></p>
+                <p id="modal-directors"></p>
+                <p id="modal-actors"></p>
+                <p id="modal-categories"></p>
+            </div>
+        </div>
     </div>
 </div>
 
