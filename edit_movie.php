@@ -60,44 +60,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Manejo de la carátula
     if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
+        $target_dir = "./img/peliculas/"; // Carpeta donde se guardarán las imágenes
         $fileTmpPath = $_FILES['caratula']['tmp_name'];
         $fileName = $_FILES['caratula']['name'];
-        $fileNameCmps = explode(".", $fileName);
-        $fileExtension = strtolower(end($fileNameCmps));
+        $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        // Validar la extensión del archivo
-        $allowedfileExtensions = array('jpg', 'gif', 'png', 'jpeg');
-        if (in_array($fileExtension, $allowedfileExtensions)) {
-            // Directorio donde se guardará la carátula
-            $uploadFileDir = './img/peliculas/';
-            $dest_path = $uploadFileDir . $fileName;
+        // Validar el tipo de archivo
+        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageFileType, $allowed_types)) {
+            die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
+        }
 
-            // Mover el archivo a la carpeta de destino
-            if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                // Actualizar la película
-                $updateQuery = "UPDATE peliculas SET titulo = ?, descripcion = ?, año = ?, duracion = ?, caratula = ? WHERE id = ?";
-                $stmt = $pdo->prepare($updateQuery);
-                $stmt->execute([$titulo, $descripcion, $año, $duracion, $fileName, $movieId]);
+        // Validar el tamaño del archivo (por ejemplo, 5MB)
+        $max_size = 5 * 1024 * 1024; // 5MB
+        if ($_FILES["caratula"]["size"] > $max_size) {
+            die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
+        }
 
-                // Actualizar las relaciones en las tablas intermedias
-                // 1. Eliminar las relaciones antiguas
-                $pdo->prepare("DELETE FROM pelicula_categoria WHERE pelicula_id = ?")->execute([$movieId]);
-                $pdo->prepare("DELETE FROM pelicula_director WHERE pelicula_id = ?")->execute([$movieId]);
-                $pdo->prepare("DELETE FROM pelicula_actor WHERE pelicula_id = ?")->execute([$movieId]);
+        // Renombrar el archivo para evitar conflictos
+        $new_file_name = uniqid() . "." . $imageFileType; // Genera un nombre único
+        $target_file = $target_dir . $new_file_name;
 
-                // 2. Insertar las nuevas relaciones
-                $pdo->prepare("INSERT INTO pelicula_categoria (pelicula_id, categoria_id) VALUES (?, ?)")->execute([$movieId, $categoria]);
-                $pdo->prepare("INSERT INTO pelicula_director (pelicula_id, director_id) VALUES (?, ?)")->execute([$movieId, $director]);
-                $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)")->execute([$movieId, $actor]);
+        // Mover el archivo subido a la carpeta de destino
+        if (move_uploaded_file($fileTmpPath, $target_file)) {
+            // Actualizar la película
+            $updateQuery = "UPDATE peliculas SET titulo = ?, descripcion = ?, año = ?, duracion = ?, caratula = ? WHERE id = ?";
+            $stmt = $pdo->prepare($updateQuery);
+            $stmt->execute([$titulo, $descripcion, $año, $duracion, $target_file, $movieId]);
 
-                // Redirigir a admin.php después de la actualización
-                header("Location: admin.php");
-                exit(); // Asegurarse de que no se ejecute más código después de la redirección
-            } else {
-                echo "Error al mover el archivo.";
-            }
+            // Actualizar las relaciones en las tablas intermedias
+            // 1. Eliminar las relaciones antiguas
+            $pdo->prepare("DELETE FROM pelicula_categoria WHERE pelicula_id = ?")->execute([$movieId]);
+            $pdo->prepare("DELETE FROM pelicula_director WHERE pelicula_id = ?")->execute([$movieId]);
+            $pdo->prepare("DELETE FROM pelicula_actor WHERE pelicula_id = ?")->execute([$movieId]);
+
+            // 2. Insertar las nuevas relaciones
+            $pdo->prepare("INSERT INTO pelicula_categoria (pelicula_id, categoria_id) VALUES (?, ?)")->execute([$movieId, $categoria]);
+            $pdo->prepare("INSERT INTO pelicula_director (pelicula_id, director_id) VALUES (?, ?)")->execute([$movieId, $director]);
+            $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)")->execute([$movieId, $actor]);
+
+            // Redirigir a admin.php después de la actualización
+            header("Location: admin.php");
+            exit(); // Asegurarse de que no se ejecute más código después de la redirección
         } else {
-            echo "Tipo de archivo no permitido.";
+            echo "Error al mover el archivo.";
         }
     } else {
         echo "Error en la carga del archivo.";

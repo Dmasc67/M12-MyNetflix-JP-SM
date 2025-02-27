@@ -39,6 +39,9 @@ $moviesResult = $pdo->query($moviesQuery);
                 <a href="logout.php" title="Cerrar Sesión">
                     <i class="fas fa-sign-out-alt" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de logout -->
                 </a>
+                <a href="add_movie.php" title="Añadir Película">
+                    <i class="fas fa-plus-circle" style="font-size: 30px; color: #fff;"></i>
+                </a>
             <?php else: ?>
                 <i class="fas fa-user" title="Iniciar Sesión" id="loginIcon" onclick="toggleModal()"></i> <!-- Ícono de login -->
             <?php endif; ?>

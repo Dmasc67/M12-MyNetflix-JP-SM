@@ -103,7 +103,7 @@ if (isset($_GET['filter'])) {
     <div class="row">
         <?php while ($row = $top5Result->fetch(PDO::FETCH_ASSOC)): ?>
             <div class="col">
-                <img src="./img/peliculas/<?php echo $row['caratula']; ?>" alt="<?php echo $row['titulo']; ?>">
+                <img src="./<?php echo $row['caratula']; ?>" alt="<?php echo $row['titulo']; ?>">
                 <h3><?php echo $row['titulo']; ?></h3>
             </div>
         <?php endwhile; ?>
@@ -123,31 +123,29 @@ if (isset($_GET['filter'])) {
     <input type="text" id="search-title" placeholder="Buscar por título">
     <input type="text" id="search-director" placeholder="Buscar por director">
     <input type="text" id="search-category" placeholder="Buscar por categoría">
-    <input type="number" id="search-year" placeholder="Buscar por año" min="1900" max="2099">
-
     <div id="movies-container" class="grid">
-        <!-- Aquí se llenarán las películas con AJAX -->
-        <?php foreach ($moviesResult as $movie): ?>
-    <div class="grid-col">
-        <img src="./img/peliculas/<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>" onclick="openMovieModal(<?php echo $movie['id']; ?>)">
-        <h3><?php echo $movie['titulo']; ?></h3>
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <p>
-                <button class="btn btn-like <?php echo ($movie['user_like'] > 0) ? 'liked' : ''; ?>" 
-                        data-id="<?php echo $movie['id']; ?>">
-                    👍<span class="like-count" id="like-count-<?php echo $movie['id']; ?>"><?php echo $movie['likes']; ?></span>
-                </button>
-            </p>
-        <?php endif; ?>
-    </div>
-<?php endforeach; ?>
+    <!-- Aquí se llenarán las películas con AJAX -->
+    <?php foreach ($moviesResult as $movie): ?>
+        <div class="grid-col">
+            <img src="./<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>" onclick="openMovieModal(<?php echo $movie['id']; ?>)">
+            <h3><?php echo $movie['titulo']; ?></h3>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <p>
+                    <button class="btn btn-like <?php echo ($movie['user_like'] > 0) ? 'liked' : ''; ?>" 
+                            data-id="<?php echo $movie['id']; ?>">
+                        👍<span class="like-count" id="like-count-<?php echo $movie['id']; ?>"><?php echo $movie['likes']; ?></span>
+                    </button>
+                </p>
+            <?php endif; ?>
         </div>
+    <?php endforeach; ?>
+</div>
 <?php else: ?>
     <h3>Películas Disponibles</h3>
     <div class="grid">
             <?php foreach ($moviesResult as $movie): ?>
                 <div class="grid-col">
-                    <img src="./img/peliculas/<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>"> 
+                    <img src="./<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>"> 
                     <h3><?php echo $movie['titulo']; ?></h3>
                 </div>
             <?php endforeach; ?>
@@ -155,7 +153,7 @@ if (isset($_GET['filter'])) {
 <?php endif; ?>
 
 <!-- Modal de Login -->
-<div id="loginModal" class="modal">
+<div id="loginModal" class="modal login-modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
         <h2>Iniciar Sesión</h2>
@@ -164,26 +162,47 @@ if (isset($_GET['filter'])) {
             <input type="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Iniciar Sesión</button>
         </form>
-        <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a></p>
+        <p>¿No tienes una cuenta? <a href="#" onclick="openRegisterModal()">Regístrate aquí</a></p>
+    </div>
+</div>
+
+<!-- Modal de Registro -->
+<div id="registerModal" class="modal register-modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('registerModal')">&times;</span>
+        <h2>Registro</h2>
+        <form action="process_register.php" method="post">
+            <input type="text_registro" name="nombre" placeholder="Nombre" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Registrar</button>
+        </form>
+        <p>¿Ya tienes una cuenta? <a href="#" onclick="openLoginModal()">Inicia sesión aquí</a></p>
     </div>
 </div>
 
 <!-- Modal de Información de Película -->
-<div id="movieModal" class="modal">
+<div id="movieModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="closeMovieModal()">&times;</span>
-        <h2 id="modal-title"></h2>
-        <img id="modal-image" src="" alt="">
-        <p id="modal-description"></p>
-        <p id="modal-year"></p>
-        <p id="modal-duration"></p>
-        <p id="modal-directors"></p>
-        <p id="modal-actors"></p>
-        <p id="modal-categories"></p>
-        <p id="modal-likes"></p>
+        <div class="modal-body">
+            <!-- La imagen ahora está primero (izquierda) -->
+            <div class="modal-image-container">
+                <img id="modal-image" src="" alt="">
+            </div>
+            <!-- La información ahora está después (derecha) -->
+            <div class="modal-info">
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+                <p id="modal-year"></p>
+                <p id="modal-duration"></p>
+                <p id="modal-directors"></p>
+                <p id="modal-actors"></p>
+                <p id="modal-categories"></p>
+            </div>
+        </div>
     </div>
 </div>
-
 
 <script src="js/script.js"></script>
 <script src="js/like.js"></script>

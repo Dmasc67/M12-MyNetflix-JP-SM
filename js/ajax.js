@@ -16,11 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#search-category").addEventListener("keyup", function () {
         cargarPeliculas();
     });
-
-    // Filtro por año
-    document.querySelector("#search-year").addEventListener("change", function () {
-        cargarPeliculas();
-    });
 });
 
 function cargarPeliculas() {
@@ -28,14 +23,14 @@ function cargarPeliculas() {
     let busquedaTitulo = document.querySelector("#search-title").value;
     let busquedaDirector = document.querySelector("#search-director").value;
     let busquedaCategoria = document.querySelector("#search-category").value;
-    let busquedaYear = document.querySelector("#search-year").value; // Cambiado a "search-year"
+
+    console.log("Filtro like:", filtroLike); // <-- Verifica qué valor se está enviando
 
     let formData = new FormData();
     formData.append("filter", filtroLike);
     formData.append("search_title", busquedaTitulo);
     formData.append("search_director", busquedaDirector);
     formData.append("search_category", busquedaCategoria);
-    formData.append("search_year", busquedaYear); // Cambiado a "search_year"
 
     fetch("ajax/filtrar_peliculas.php", {
         method: "POST",
@@ -48,12 +43,14 @@ function cargarPeliculas() {
         return response.json();
     })
     .then(data => {
+        console.log("Películas recibidas:", data); // <-- Verifica qué datos está devolviendo el servidor
+
         let contenedor = document.querySelector("#movies-container");
         contenedor.innerHTML = "";
         data.forEach(pelicula => {
             let peliculaHTML = `
                 <div class="grid-col">
-                    <img src="./img/peliculas/${pelicula.caratula}" alt="${pelicula.titulo}">
+                    <img src="./${pelicula.caratula}" alt="${pelicula.titulo}">
                     <h3>${pelicula.titulo}</h3>
                     <p>
                         <button class="btn btn-like ${pelicula.user_like ? 'liked' : ''}" data-id="${pelicula.id}">
@@ -63,6 +60,10 @@ function cargarPeliculas() {
                 </div>`;
             contenedor.innerHTML += peliculaHTML;
         });
+
+        // Reasignar eventos después de actualizar el contenido
+        assignLikeEvents();
+        assignModalEvents();
     })
     .catch(error => {
         console.error("Error en AJAX:", error);
