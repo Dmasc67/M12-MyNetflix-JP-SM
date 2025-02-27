@@ -231,6 +231,133 @@ select:focus, input[type="text"]:focus, input[type="number"]:focus {
     color: #fff;
 }
 
+/* Estilos específicos para el modal de inicio de sesión */
+.modal.login-modal .modal-content {
+    max-width: 400px; /* Ancho más pequeño para el modal de login */
+    background-color: #2c2c2c; /* Color de fondo diferente */
+    padding: 30px; /* Más padding para un mejor aspecto */
+    border-radius: 15px; /* Bordes más redondeados */
+}
+
+.modal.login-modal h2 {
+    text-align: center; /* Centrar el título */
+    color: #fff; /* Color del texto */
+    margin-bottom: 30px; /* Más espacio debajo del título */
+}
+
+.modal.login-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre los elementos del formulario */
+}
+
+.modal.login-modal input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #1c1c1c;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.modal.login-modal input::placeholder {
+    color: #888;
+}
+
+.modal.login-modal button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #e50914;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.modal.login-modal button:hover {
+    background-color: #e50914;
+}
+
+.modal.login-modal p {
+    text-align: center;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.modal.login-modal a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.modal.login-modal a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos específicos para el modal de registro */
+.modal.register-modal .modal-content {
+    max-width: 400px;
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.modal.register-modal h2 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.modal.register-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal.register-modal input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #1c1c1c;
+    color: #fff;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.modal.register-modal input::placeholder {
+    color: #888;
+}
+
+.modal.register-modal button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #e50914;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.modal.register-modal button:hover {
+    background-color: #ff0000;
+}
+
+.modal.register-modal p {
+    text-align: center;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.modal.register-modal a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.modal.register-modal a:hover {
+    text-decoration: underline;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .top5 .col, .grid-col {
