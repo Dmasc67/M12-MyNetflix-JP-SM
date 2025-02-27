@@ -123,7 +123,6 @@ if (isset($_GET['filter'])) {
     <input type="text" id="search-title" placeholder="Buscar por título">
     <input type="text" id="search-director" placeholder="Buscar por director">
     <input type="text" id="search-category" placeholder="Buscar por categoría">
-    <input type="number" id="search-year" placeholder="Buscar por año" min="1900" max="2099">
     <div id="movies-container" class="grid">
     <!-- Aquí se llenarán las películas con AJAX -->
     <?php foreach ($moviesResult as $movie): ?>

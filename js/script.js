@@ -95,3 +95,12 @@ function openLoginModal() {
     closeModal('registerModal'); // Cierra el modal de registro
     openModal('loginModal'); // Abre el modal de inicio de sesión
 }
+
+function assignModalEvents() {
+    document.querySelectorAll(".grid-col img").forEach(img => {
+        img.addEventListener("click", function () {
+            const movieId = this.closest(".grid-col").querySelector(".btn-like").dataset.id;
+            openMovieModal(movieId);
+        });
+    });
+}
