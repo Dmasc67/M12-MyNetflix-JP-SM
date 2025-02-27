@@ -103,7 +103,7 @@ if (isset($_GET['filter'])) {
     <div class="row">
         <?php while ($row = $top5Result->fetch(PDO::FETCH_ASSOC)): ?>
             <div class="col">
-                <img src="./img/peliculas/<?php echo $row['caratula']; ?>" alt="<?php echo $row['titulo']; ?>">
+                <img src="./<?php echo $row['caratula']; ?>" alt="<?php echo $row['titulo']; ?>">
                 <h3><?php echo $row['titulo']; ?></h3>
             </div>
         <?php endwhile; ?>
@@ -124,30 +124,29 @@ if (isset($_GET['filter'])) {
     <input type="text" id="search-director" placeholder="Buscar por director">
     <input type="text" id="search-category" placeholder="Buscar por categoría">
     <input type="number" id="search-year" placeholder="Buscar por año" min="1900" max="2099">
-
     <div id="movies-container" class="grid">
-        <!-- Aquí se llenarán las películas con AJAX -->
-        <?php foreach ($moviesResult as $movie): ?>
-    <div class="grid-col">
-        <img src="./img/peliculas/<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>" onclick="openMovieModal(<?php echo $movie['id']; ?>)">
-        <h3><?php echo $movie['titulo']; ?></h3>
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <p>
-                <button class="btn btn-like <?php echo ($movie['user_like'] > 0) ? 'liked' : ''; ?>" 
-                        data-id="<?php echo $movie['id']; ?>">
-                    👍<span class="like-count" id="like-count-<?php echo $movie['id']; ?>"><?php echo $movie['likes']; ?></span>
-                </button>
-            </p>
-        <?php endif; ?>
-    </div>
-<?php endforeach; ?>
+    <!-- Aquí se llenarán las películas con AJAX -->
+    <?php foreach ($moviesResult as $movie): ?>
+        <div class="grid-col">
+            <img src="./<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>" onclick="openMovieModal(<?php echo $movie['id']; ?>)">
+            <h3><?php echo $movie['titulo']; ?></h3>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <p>
+                    <button class="btn btn-like <?php echo ($movie['user_like'] > 0) ? 'liked' : ''; ?>" 
+                            data-id="<?php echo $movie['id']; ?>">
+                        👍<span class="like-count" id="like-count-<?php echo $movie['id']; ?>"><?php echo $movie['likes']; ?></span>
+                    </button>
+                </p>
+            <?php endif; ?>
         </div>
+    <?php endforeach; ?>
+</div>
 <?php else: ?>
     <h3>Películas Disponibles</h3>
     <div class="grid">
             <?php foreach ($moviesResult as $movie): ?>
                 <div class="grid-col">
-                    <img src="./img/peliculas/<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>"> 
+                    <img src="./<?php echo $movie['caratula']; ?>" alt="<?php echo $movie['titulo']; ?>" data-id="<?php echo $movie['id']; ?>"> 
                     <h3><?php echo $movie['titulo']; ?></h3>
                 </div>
             <?php endforeach; ?>

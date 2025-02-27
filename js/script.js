@@ -16,7 +16,7 @@ function openMovieModal(movieId) {
         .then(data => {
             // Actualizar la información de la película en el modal
             document.getElementById('modal-title').innerText = data.titulo;
-            document.getElementById('modal-image').src = `./img/peliculas/${data.caratula}`;
+            document.getElementById('modal-image').src = `./${data.caratula}`;
             document.getElementById('modal-description').innerText = data.descripcion;
             document.getElementById('modal-year').innerText = `Año: ${data.año}`;
             document.getElementById('modal-duration').innerText = `Duración: ${data.duracion} minutos`;
