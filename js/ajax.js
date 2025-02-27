@@ -53,7 +53,7 @@ function cargarPeliculas() {
         data.forEach(pelicula => {
             let peliculaHTML = `
                 <div class="grid-col">
-                    <img src="./img/peliculas/${pelicula.caratula}" alt="${pelicula.titulo}">
+                    <img src="./${pelicula.caratula}" alt="${pelicula.titulo}">
                     <h3>${pelicula.titulo}</h3>
                     <p>
                         <button class="btn btn-like ${pelicula.user_like ? 'liked' : ''}" data-id="${pelicula.id}">
@@ -63,6 +63,9 @@ function cargarPeliculas() {
                 </div>`;
             contenedor.innerHTML += peliculaHTML;
         });
+                // Reasignar eventos después de actualizar el contenido
+                assignLikeEvents(); // Reasignar eventos de "like"
+                assignModalEvents(); // Reasignar eventos del modal
     })
     .catch(error => {
         console.error("Error en AJAX:", error);
