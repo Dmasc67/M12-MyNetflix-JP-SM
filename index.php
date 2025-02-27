@@ -155,7 +155,7 @@ if (isset($_GET['filter'])) {
 <?php endif; ?>
 
 <!-- Modal de Login -->
-<div id="loginModal" class="modal" style="display: none;">
+<div id="loginModal" class="modal login-modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
         <h2>Iniciar Sesión</h2>
@@ -164,7 +164,22 @@ if (isset($_GET['filter'])) {
             <input type="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Iniciar Sesión</button>
         </form>
-        <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a></p>
+        <p>¿No tienes una cuenta? <a href="#" onclick="openRegisterModal()">Regístrate aquí</a></p>
+    </div>
+</div>
+
+<!-- Modal de Registro -->
+<div id="registerModal" class="modal register-modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('registerModal')">&times;</span>
+        <h2>Registro</h2>
+        <form action="process_register.php" method="post">
+            <input type="text_registro" name="nombre" placeholder="Nombre" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Registrar</button>
+        </form>
+        <p>¿Ya tienes una cuenta? <a href="#" onclick="openLoginModal()">Inicia sesión aquí</a></p>
     </div>
 </div>
 

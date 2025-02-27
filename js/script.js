@@ -67,3 +67,31 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 });
+
+// Función para abrir un modal específico
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+// Función para cerrar un modal específico
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Función para abrir el modal de registro y cerrar el de login
+function openRegisterModal() {
+    closeModal('loginModal'); // Cierra el modal de inicio de sesión
+    openModal('registerModal'); // Abre el modal de registro
+}
+
+// Función para abrir el modal de login y cerrar el de registro
+function openLoginModal() {
+    closeModal('registerModal'); // Cierra el modal de registro
+    openModal('loginModal'); // Abre el modal de inicio de sesión
+}
