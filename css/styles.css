@@ -361,37 +361,47 @@ select:focus, input[type="text"]:focus, input[type="number"]:focus {
 /* Responsive Design */
 @media (max-width: 768px) {
     .top5 .col, .grid-col {
-        width: 150px;
+        width: 150px; /* Ajustar el ancho de las columnas en pantallas medianas */
     }
 
     .grid-col img {
-        height: 200px;
+        height: 200px; /* Ajustar la altura de las imágenes en la cuadrícula */
     }
 
     .header h1 {
-        font-size: 2rem;
+        font-size: 2rem; /* Reducir el tamaño de fuente del encabezado */
     }
 
     .auth-icon i {
-        font-size: 1.5rem;
+        font-size: 1.5rem; /* Reducir el tamaño de los iconos de autenticación */
+    }
+    table {
+        width: 100%; /* Asegurar que la tabla ocupe el 100% del ancho */
+        overflow-x: auto; /* Permitir desplazamiento horizontal si es necesario */
+        display: block; /* Hacer que la tabla sea un bloque para el desplazamiento */
+    }
+
+    table th, table td {
+        font-size: 0.9rem; /* Reducir tamaño de fuente en tablas */
+        padding: 8px; /* Ajustar padding para mejor visualización */
     }
 }
 
 @media (max-width: 480px) {
     .top5 .col, .grid-col {
-        width: 120px;
+        width: 120px; /* Ajustar el ancho de las columnas en pantallas pequeñas */
     }
 
     .grid-col img {
-        height: 150px;
+        height: 150px; /* Ajustar la altura de las imágenes en la cuadrícula */
     }
 
     .header h1 {
-        font-size: 1.5rem;
+        font-size: 1.5rem; /* Reducir aún más el tamaño de fuente del encabezado */
     }
 
     .auth-icon i {
-        font-size: 1.2rem;
+        font-size: 1.2rem; /* Reducir aún más el tamaño de los iconos de autenticación */
     }
 }
 
