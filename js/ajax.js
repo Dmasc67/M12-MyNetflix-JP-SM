@@ -24,6 +24,8 @@ function cargarPeliculas() {
     let busquedaDirector = document.querySelector("#search-director").value;
     let busquedaCategoria = document.querySelector("#search-category").value;
 
+    console.log("Filtro like:", filtroLike); // <-- Verifica qué valor se está enviando
+
     let formData = new FormData();
     formData.append("filter", filtroLike);
     formData.append("search_title", busquedaTitulo);
@@ -41,6 +43,8 @@ function cargarPeliculas() {
         return response.json();
     })
     .then(data => {
+        console.log("Películas recibidas:", data); // <-- Verifica qué datos está devolviendo el servidor
+
         let contenedor = document.querySelector("#movies-container");
         contenedor.innerHTML = "";
         data.forEach(pelicula => {
@@ -56,9 +60,10 @@ function cargarPeliculas() {
                 </div>`;
             contenedor.innerHTML += peliculaHTML;
         });
-                // Reasignar eventos después de actualizar el contenido
-                assignLikeEvents(); // Reasignar eventos de "like"
-                assignModalEvents(); // Reasignar eventos del modal
+
+        // Reasignar eventos después de actualizar el contenido
+        assignLikeEvents();
+        assignModalEvents();
     })
     .catch(error => {
         console.error("Error en AJAX:", error);
