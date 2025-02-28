@@ -6,6 +6,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    // Validaciones del lado del servidor
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error_message'] = 'El email no es válido.';
+        header("Location: index.php");
+        exit();
+    }
+
     // Consulta para verificar el usuario
     $query = "SELECT * FROM usuarios WHERE email = :email";
     $stmt = $pdo->prepare($query);
