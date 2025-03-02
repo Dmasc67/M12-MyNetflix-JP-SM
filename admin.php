@@ -25,7 +25,10 @@ $moviesResult = $pdo->query($moviesQuery);
     <title>Administración</title>
     <link rel="stylesheet" href="css/stylesadmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/sweetalert.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/search_movies.js"></script>
 </head>
 <body>
     <!-- Encabezado -->
@@ -62,6 +65,9 @@ $moviesResult = $pdo->query($moviesQuery);
         <h2>Usuarios</h2>
         <div id="usersTable">
             <!-- Aquí se cargará la tabla de usuarios -->
+            <!-- Ejemplo de botón para activar/desactivar usuario -->
+            <button onclick="activateUser(1)">Activar Usuario</button>
+            <button onclick="deactivateUser(1)">Desactivar Usuario</button>
         </div>
 
         <!-- Buscar Películas -->
@@ -75,7 +81,72 @@ $moviesResult = $pdo->query($moviesQuery);
         </div>
     </div>
 
-    <script src="js/search_movies.js"></script>
-    <script src="js/admin.js"></script>
+    <script>
+        function activateUser(userId) {
+            confirmActivateUser(userId, function(id) {
+                // Lógica para activar el usuario
+                fetch('activate_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire('Activado!', 'El usuario ha sido activado.', 'success');
+                    } else {
+                        Swal.fire('Error!', data.message, 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+
+        function deactivateUser(userId) {
+            confirmDeactivateUser(userId, function(id) {
+                // Lógica para desactivar el usuario
+                fetch('deactivate_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire('Desactivado!', 'El usuario ha sido desactivado.', 'success');
+                    } else {
+                        Swal.fire('Error!', data.message, 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+
+        function validateUser(userId) {
+            confirmValidateUser(userId, function(id) {
+                // Lógica para validar el usuario
+                fetch('validate_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire('Validado!', 'El usuario ha sido validado.', 'success');
+                    } else {
+                        Swal.fire('Error!', data.message, 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+    </script>
 </body>
 </html>

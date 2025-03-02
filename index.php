@@ -82,8 +82,10 @@ if (isset($_GET['filter'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyNetflix</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="js/validacion_form.js"></script>
+    <script src="js/sweetalert.js"></script>
     <style>
         .modal {
             display: flex;
@@ -253,5 +255,16 @@ if (isset($_GET['filter'])) {
 <script src="js/script.js"></script>
 <script src="js/like.js"></script>
 <script src="js/ajax.js"></script>
+<script>
+    // Llamar a esta función después de un registro exitoso
+    function onRegisterSuccess() {
+        showRegistrationAlert();
+    }
+
+    // Llamar a esta función después de un inicio de sesión exitoso
+    function onLoginSuccess(username) {
+        showLoginAlert(username);
+    }
+</script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 session_start();
 require 'db/conexion.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
@@ -31,12 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_role'] = $user['rol'];
-        header("Location: index.php");
-        exit();
+        $_SESSION['username'] = $user['nombre'];
+
+        echo json_encode(['status' => 'success', 'username' => $user['nombre']]);
     } else {
-        $_SESSION['error_message'] = 'Credenciales incorrectas.';
-        header("Location: index.php");
-        exit();
+        echo json_encode(['status' => 'error', 'message' => 'Credenciales incorrectas.']);
     }
+    exit();
 }
 ?>

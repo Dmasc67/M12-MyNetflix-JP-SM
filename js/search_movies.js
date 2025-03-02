@@ -20,27 +20,37 @@ document.addEventListener("DOMContentLoaded", function () {
             button.addEventListener("click", function (event) {
                 event.preventDefault();
                 const movieId = this.dataset.id;
-                console.log("Botón eliminar clickeado, ID de película:", movieId);
 
-                fetch("ajax/delete_movie.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: `id=${movieId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Respuesta del servidor:", data);
-                    if (data.status === "success") {
-                        loadMovies(); // Reload movies after deletion
-                    } else {
-                        console.error("Error al eliminar la película:", data.message);
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¿Deseas eliminar esta película?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch("ajax/delete_movie.php", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: `id=${movieId}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "success") {
+                                Swal.fire('Eliminado!', 'La película ha sido eliminada.', 'success');
+                                loadMovies(); // Reload movies after deletion
+                            } else {
+                                Swal.fire('Error!', 'Error al eliminar la película: ' + data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error al eliminar la película:", error);
+                            Swal.fire('Error!', 'Error al eliminar la película.', 'error');
+                        });
                     }
-                })
-                .catch(error => {
-                    console.error("Error al eliminar la película:", error);
-                    console.log("Error completo:", error);
                 });
             });
         });
