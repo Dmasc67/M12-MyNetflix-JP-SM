@@ -72,6 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['caratula'] = "Debe subir una imagen.";
     }
 
+    // Verificar si el título ya existe
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM peliculas WHERE titulo = ?");
+    $stmt->execute([$titulo]);
+    $count = $stmt->fetchColumn();
+
+    if ($count > 0) {
+        $errors['titulo'] = "El título de la película ya existe.";
+    }
+
     if (empty($errors)) {
         // Manejo de la carátula (subida de archivos)
         $target_dir = "./img/peliculas/";
@@ -228,6 +237,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn btn-primary">Añadir Película</button>
     </form>
     <br>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/same_film.js"></script>
     <script src="validacion.js"></script>
 </body>
 </html>
