@@ -68,41 +68,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['actor'] = "Debe seleccionar un actor.";
     }
 
+    if (!isset($_FILES['caratula']) || $_FILES['caratula']['error'] !== UPLOAD_ERR_OK) {
+        $errors['caratula'] = "Debe subir una imagen.";
+    }
+
     if (empty($errors)) {
-        // Validar que se haya subido una imagen
-        if (!isset($_FILES['caratula']) || $_FILES['caratula']['error'] !== UPLOAD_ERR_OK) {
-            $errors['caratula'] = "Debe subir una imagen.";
-        } else {
-            // Manejo de la carátula (subida de archivos)
-            $target_dir = "./img/peliculas/"; // Carpeta donde se guardarán las imágenes
-            $target_file = $target_dir . basename($_FILES["caratula"]["name"]);
-            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        // Manejo de la carátula (subida de archivos)
+        $target_dir = "./img/peliculas/";
+        $target_file = $target_dir . basename($_FILES["caratula"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-            // Validar el tipo de archivo
-            $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-            if (!in_array($imageFileType, $allowed_types)) {
-                die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
-            }
-
-            // Validar el tamaño del archivo (por ejemplo, 5MB)
-            $max_size = 5 * 1024 * 1024; // 5MB
-            if ($_FILES["caratula"]["size"] > $max_size) {
-                die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
-            }
-
-            // Renombrar el archivo para evitar conflictos
-            $new_file_name = uniqid() . "." . $imageFileType; // Genera un nombre único
-            $target_file = $target_dir . $new_file_name;
-
-            // Mover el archivo subido a la carpeta de destino
-            if (move_uploaded_file($_FILES["caratula"]["tmp_name"], $target_file)) {
-                $caratula = $target_file; // Guarda la ruta del archivo en la base de datos
-            } else {
-                die("Error: Hubo un problema al subir el archivo.");
-            }
+        // Validar el tipo de archivo
+        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageFileType, $allowed_types)) {
+            die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
         }
 
-        // Insertar la película en la tabla `peliculas`
+        // Validar el tamaño del archivo (por ejemplo, 5MB)
+        $max_size = 5 * 1024 * 1024; // 5MB
+        if ($_FILES["caratula"]["size"] > $max_size) {
+            die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
+        }
+
+        // Renombrar el archivo para evitar conflictos
+        $new_file_name = uniqid() . "." . $imageFileType;
+        $target_file = $target_dir . $new_file_name;
+
+        // Mover el archivo subido a la carpeta de destino
+        if (move_uploaded_file($_FILES["caratula"]["tmp_name"], $target_file)) {
+            $caratula = $target_file;
+        } else {
+            die("Error: Hubo un problema al subir el archivo.");
+        }
+
+        // Insertar la película en la base de datos
         $query = "INSERT INTO peliculas (titulo, descripcion, año, duracion, caratula) VALUES (?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($query);
         $stmt->execute([$titulo, $descripcion, $año, $duracion, $caratula]);
@@ -120,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_actor = $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)");
         $stmt_actor->execute([$pelicula_id, $actor_id]);
 
-        header("Location: admin.php"); // Redirige de vuelta al panel de administración
+        header("Location: admin.php");
         exit();
     }
 }
@@ -149,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-icon">
         <?php if ($_SESSION['user_role'] === 'admin'): ?>
             <a href="admin.php" title="Volver a Administración">
-                <i class="fas fa-arrow-left" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de volver atrás -->
+                <i class="fas fa-arrow-left" style="font-size: 30px; color: #fff;"></i>
             </a>
         <?php endif; ?>
     </div>

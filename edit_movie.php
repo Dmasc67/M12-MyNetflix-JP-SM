@@ -64,16 +64,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['titulo'] = "El título no debe exceder los 100 caracteres.";
     }
 
+    if (empty($titulo)) {
+        $errors['titulo'] = "El título es obligatorio.";
+    }
+
     if (strlen($descripcion) > 240) {
         $errors['descripcion'] = "La descripción no debe exceder los 240 caracteres.";
+    }
+
+    if (empty($descripcion)) {
+        $errors['descripcion'] = "La descripción es obligatoria.";
     }
 
     if (!preg_match('/^\d{4}$/', $año)) {
         $errors['año'] = "El año debe ser un número de 4 dígitos.";
     }
 
+    if (empty($año)) {
+        $errors['año'] = "El año es obligatorio.";
+    }
+
     if (!preg_match('/^\d{1,3}$/', $duracion)) {
         $errors['duracion'] = "La duración debe ser un número de hasta 3 dígitos.";
+    }
+
+    if (empty($duracion)) {
+        $errors['duracion'] = "La duración es obligatoria.";
+    }
+
+    if (empty($categoria)) {
+        $errors['categoria'] = "Debe seleccionar una categoría.";
+    }
+
+    if (empty($director)) {
+        $errors['director'] = "Debe seleccionar un director.";
+    }
+
+    if (empty($actor)) {
+        $errors['actor'] = "Debe seleccionar un actor.";
     }
 
     if (empty($errors)) {
