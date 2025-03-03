@@ -272,7 +272,7 @@ if (isset($_SESSION['user_id'])) {
         <span class="close" onclick="closeModal('registerModal')">&times;</span>
         <h2>Registro</h2>
         <form id="registerForm" action="process_register.php" method="post">
-            <input type="text" name="nombre" placeholder="Nombre" required value="<?php echo htmlspecialchars($_POST['nombre'] ?? '', ENT_QUOTES); ?>">
+            <input type="text" name="nombre" placeholder="Nombre" required value="<?php echo htmlspecialchars($_POST['nombre'] ?? '', ENT_QUOTES); ?>" style="margin-left: 0;">
             <div class="error-message"></div>
 
             <input type="email" name="email" placeholder="Email" required value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES); ?>">

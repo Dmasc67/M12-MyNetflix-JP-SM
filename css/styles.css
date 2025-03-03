@@ -312,7 +312,8 @@ select:focus, input[type="text"]:focus, input[type="number"]:focus {
     gap: 15px;
 }
 
-.modal.register-modal input {
+.modal.register-modal input,
+.modal.register-modal button {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
@@ -321,6 +322,7 @@ select:focus, input[type="text"]:focus, input[type="number"]:focus {
     color: #fff;
     font-size: 1rem;
     box-sizing: border-box;
+    margin-bottom: 15px;
 }
 
 .modal.register-modal input::placeholder {
