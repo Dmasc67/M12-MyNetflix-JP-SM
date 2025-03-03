@@ -13,10 +13,26 @@ document.addEventListener("DOMContentLoaded", function () {
         cargarPeliculas();
     });
 
-    document.querySelector("#search-category").addEventListener("keyup", function () {
+    document.querySelector("#search-category").addEventListener("change", function () {
         cargarPeliculas();
     });
+
+    // Botón para limpiar filtros
+    document.querySelector("#clear-filters").addEventListener("click", function() {
+        limpiarFiltros();
+    });
 });
+
+function limpiarFiltros() {
+    // Restablecer valores predeterminados
+    document.querySelector("#filter-like").value = "all";
+    document.querySelector("#search-title").value = "";
+    document.querySelector("#search-director").value = "";
+    document.querySelector("#search-category").value = "";
+
+    // Recargar películas
+    cargarPeliculas();
+}
 
 function cargarPeliculas() {
     let filtroLike = document.querySelector("#filter-like").value;

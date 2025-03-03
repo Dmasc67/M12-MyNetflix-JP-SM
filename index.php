@@ -74,6 +74,10 @@ if (isset($_GET['filter'])) {
     $stmt->execute(['user_id' => $_SESSION['user_id']]);
     $moviesResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Obtener categorías para el filtro
+$categoriasQuery = "SELECT * FROM categorias ORDER BY nombre";
+$categoriasResult = $pdo->query($categoriasQuery);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -116,6 +120,31 @@ if (isset($_GET['filter'])) {
             margin-top: 5px;
             margin-bottom: 15px;
         }
+
+        .filters-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filters-container .form-control {
+            max-width: 200px;
+        }
+        #clear-filters {
+            padding: 8px 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #clear-filters:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
@@ -156,15 +185,28 @@ if (isset($_GET['filter'])) {
     <h2>Películas Disponibles</h2>
 
     <h3>Filtros</h3>
-    <select id="filter-like">
-        <option value="all">Todas</option>
-        <option value="liked">Películas que me gustan</option>
-        <option value="unliked">Películas que no me gustan</option>
-    </select>
+    <div class="filters-container">
+        <select id="filter-like" class="form-control">
+            <option value="all">Todas</option>
+            <option value="liked">Películas que me gustan</option>
+            <option value="unliked">Películas que no me gustan</option>
+        </select>
 
-    <input type="text" id="search-title" placeholder="Buscar por título">
-    <input type="text" id="search-director" placeholder="Buscar por director">
-    <input type="text" id="search-category" placeholder="Buscar por categoría">
+        <input type="text" id="search-title" class="form-control" placeholder="Buscar por título">
+        <input type="text" id="search-director" class="form-control" placeholder="Buscar por director">
+        <select id="search-category" class="form-control">
+            <option value="">Todas las categorías</option>
+            <?php while ($categoria = $categoriasResult->fetch(PDO::FETCH_ASSOC)): ?>
+                <option value="<?php echo htmlspecialchars($categoria['nombre']); ?>">
+                    <?php echo htmlspecialchars($categoria['nombre']); ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
+        <button id="clear-filters" class="btn btn-secondary">
+            <i class="fas fa-undo"></i> Limpiar filtros
+        </button>
+    </div>
+
     <div id="movies-container" class="grid">
     <!-- Aquí se llenarán las películas con AJAX -->
     <?php foreach ($moviesResult as $movie): ?>
