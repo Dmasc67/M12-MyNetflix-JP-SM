@@ -254,10 +254,10 @@ if (isset($_SESSION['user_id'])) {
         <span class="close" onclick="toggleModal()">&times;</span>
         <h2>Iniciar Sesión</h2>
         <form id="loginForm" action="process_login.php" method="post">
-            <input type="email" name="email" placeholder="Email" required>
+            <input type="email" name="email" placeholder="Email" >
             <div class="error-message"></div>
 
-            <input type="password" name="password" placeholder="Contraseña" required>
+            <input type="password" name="password" placeholder="Contraseña" >
             <div class="error-message"></div>
 
             <button type="submit">Iniciar Sesión</button>
@@ -272,13 +272,13 @@ if (isset($_SESSION['user_id'])) {
         <span class="close" onclick="closeModal('registerModal')">&times;</span>
         <h2>Registro</h2>
         <form id="registerForm" action="process_register.php" method="post">
-            <input type="text" name="nombre" placeholder="Nombre" required value="<?php echo htmlspecialchars($_POST['nombre'] ?? '', ENT_QUOTES); ?>" style="margin-left: 0;">
+            <input type="text" name="nombre" placeholder="Nombre"  value="<?php echo htmlspecialchars($_POST['nombre'] ?? '', ENT_QUOTES); ?>" style="margin-left: 0;">
             <div class="error-message"></div>
 
-            <input type="email" name="email" placeholder="Email" required value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES); ?>">
+            <input type="email" name="email" placeholder="Email"  value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES); ?>">
             <div class="error-message"></div>
 
-            <input type="password" name="password" placeholder="Contraseña" required>
+            <input type="password" name="password" placeholder="Contraseña" >
             <div class="error-message"></div>
 
             <button type="submit">Registrar</button>
