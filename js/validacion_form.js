@@ -15,13 +15,18 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                clearErrors(registerForm); // Limpiar errores previos
                 if (data.status === 'error') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message,
-                        confirmButtonText: 'Aceptar'
-                    });
+                    if (data.errors) {
+                        displayErrors(registerForm, data.errors);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 } else {
                     // Oculta el formulario
                     registerModal.style.display = 'none';
@@ -51,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                clearErrors(loginForm); // Limpiar errores previos
                 if (data.status === 'success') {
                     // Muestra el SweetAlert de inicio de sesión exitoso
                     showLoginAlert(data.username);
@@ -60,19 +66,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.reload(); // Recarga la página o redirige a otra página
                     }, 3000);
                 } else {
-                    // Muestra el SweetAlert de error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message,
-                        confirmButtonText: 'Aceptar'
-                    });
+                    if (data.errors) {
+                        displayErrors(loginForm, data.errors);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 }
             })
             .catch(error => console.error('Error:', error));
         });
     }
 });
+
+function clearErrors(form) {
+    const errorMessages = form.querySelectorAll('.error-message');
+    errorMessages.forEach(error => error.textContent = '');
+}
+
+function displayErrors(form, errors) {
+    for (const [field, message] of Object.entries(errors)) {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (input) {
+            const errorElement = input.nextElementSibling;
+            if (errorElement && errorElement.classList.contains('error-message')) {
+                errorElement.textContent = message;
+            }
+        }
+    }
+}
 
 function showPendingValidationAlert() {
     Swal.fire({

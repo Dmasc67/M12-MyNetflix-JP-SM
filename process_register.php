@@ -10,6 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validaciones del lado del servidor
     $errors = [];
 
+    if (!preg_match('/^[a-zA-Z\s]+$/', $nombre)) {
+        $errors['nombre'] = "El nombre solo debe contener letras.";
+    }
+
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = "El email no es válido.";
     }
@@ -22,8 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE email = :email");
     $stmt->execute(['email' => $email]);
     if ($stmt->fetchColumn() > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'El email ya está registrado.']);
-        exit();
+        $errors['email'] = 'El email ya está registrado.';
     }
 
     if (empty($errors)) {
@@ -35,11 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute(['nombre' => $nombre, 'email' => $email, 'password' => $passwordHash]);
 
         echo json_encode(['status' => 'success']);
-        exit();
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Error en los datos proporcionados.']);
-        exit();
+        echo json_encode(['status' => 'error', 'errors' => $errors]);
     }
+    exit();
 }
 
 if (isset($_POST['email'])) {

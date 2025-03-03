@@ -253,9 +253,13 @@ if (isset($_SESSION['user_id'])) {
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
         <h2>Iniciar Sesión</h2>
-        <form action="process_login.php" method="post">
+        <form id="loginForm" action="process_login.php" method="post">
             <input type="email" name="email" placeholder="Email" required>
+            <div class="error-message"></div>
+
             <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="error-message"></div>
+
             <button type="submit">Iniciar Sesión</button>
         </form>
         <p>¿No tienes una cuenta? <a href="#" onclick="openRegisterModal()">Regístrate aquí</a></p>
@@ -269,13 +273,13 @@ if (isset($_SESSION['user_id'])) {
         <h2>Registro</h2>
         <form id="registerForm" action="process_register.php" method="post">
             <input type="text" name="nombre" placeholder="Nombre" required value="<?php echo htmlspecialchars($_POST['nombre'] ?? '', ENT_QUOTES); ?>">
-            <div id="nombre-error" class="error-message"><?php echo $errors['nombre'] ?? ''; ?></div>
+            <div class="error-message"></div>
 
             <input type="email" name="email" placeholder="Email" required value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES); ?>">
-            <div id="email-error" class="error-message"><?php echo $errors['email'] ?? ''; ?></div>
+            <div class="error-message"></div>
 
             <input type="password" name="password" placeholder="Contraseña" required>
-            <div id="password-error" class="error-message"><?php echo $errors['password'] ?? ''; ?></div>
+            <div class="error-message"></div>
 
             <button type="submit">Registrar</button>
         </form>
