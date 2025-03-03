@@ -149,3 +149,37 @@ table tr:hover {
         padding: 8px; /* Ajustar padding para mejor visualización */
     }
 }
+
+@media (max-width: 480px) {
+    .admin-panel {
+        padding: 10px; /* Reducir el padding para pantallas pequeñas */
+    }
+
+    .admin-panel h1, .admin-panel h2 {
+        font-size: 1.2rem; /* Reducir el tamaño de fuente de los encabezados */
+    }
+
+    .admin-panel input[type="text"], 
+    .admin-panel input[type="number"], 
+    .admin-panel input[type="file"], 
+    .admin-panel select {
+        width: 100%; /* Asegurar que los inputs ocupen el 100% del ancho */
+        max-width: none; /* Eliminar el ancho máximo */
+    }
+
+    .admin-panel button {
+        width: 100%; /* Botones ocupan el 100% del ancho */
+        font-size: 0.9rem; /* Ajustar tamaño de fuente de los botones */
+    }
+
+    table {
+        width: 100%; /* Asegurar que la tabla ocupe el 100% del ancho */
+        overflow-x: auto; /* Permitir desplazamiento horizontal si es necesario */
+        display: block; /* Hacer que la tabla sea un bloque para el desplazamiento */
+    }
+
+    table th, table td {
+        font-size: 0.8rem; /* Reducir tamaño de fuente en tablas */
+        padding: 6px; /* Ajustar padding para mejor visualización */
+    }
+}

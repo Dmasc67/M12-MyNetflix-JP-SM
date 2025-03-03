@@ -78,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         $updateQuery = "UPDATE peliculas SET titulo = ?, descripcion = ?, año = ?, duracion = ?";
+        $params = [$titulo, $descripcion, $año, $duracion];
 
         // Manejo de la carátula
         if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
@@ -108,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $updateQuery .= " WHERE id = ?";
-        $params = [$titulo, $descripcion, $año, $duracion, $movieId];
+        $params[] = $movieId;
 
         $stmt = $pdo->prepare($updateQuery);
         $stmt->execute($params);
