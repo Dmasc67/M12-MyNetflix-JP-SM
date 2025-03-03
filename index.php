@@ -2,6 +2,11 @@
 include './db/conexion.php';
 session_start();
 
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']);
+}
+
 // Mostrar mensaje de error si existe
 if (isset($_SESSION['error_message'])) {
     echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">'
@@ -11,6 +16,9 @@ if (isset($_SESSION['error_message'])) {
         . '</button></div>';
     unset($_SESSION['error_message']); // Limpiar el mensaje después de mostrarlo
 }
+
+// Mostrar el modal de registro si hay errores
+$showRegisterModal = isset($errors) && !empty($errors);
 
 // Obtener las 5 películas más populares
 $top5Query = "SELECT p.titulo, COUNT(l.usuario_id) AS likes, p.caratula 
@@ -66,6 +74,22 @@ if (isset($_GET['filter'])) {
     $stmt->execute(['user_id' => $_SESSION['user_id']]);
     $moviesResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Obtener categorías para el filtro
+$categoriasQuery = "SELECT * FROM categorias ORDER BY nombre";
+$categoriasResult = $pdo->query($categoriasQuery);
+
+// Verificar el estado del usuario y mostrar alertas
+if (isset($_SESSION['user_id'])) {
+    $userStatus = $_SESSION['user_status'] ?? 'pendiente';
+    echo "<script>";
+    if ($userStatus === 'pendiente') {
+        echo "showPendingValidationAlert();";
+    } elseif ($userStatus === 'inactivo') {
+        echo "showInactiveUserAlert();";
+    }
+    echo "</script>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -74,7 +98,66 @@ if (isset($_GET['filter'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyNetflix</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="js/validacion_form.js"></script>
+    <script src="js/sweetalert.js"></script>
+    <style>
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filters-container .form-control {
+            max-width: 200px;
+        }
+        #clear-filters {
+            padding: 8px 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #clear-filters:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
 <body>
     
@@ -82,15 +165,15 @@ if (isset($_GET['filter'])) {
 <div class="header">
     <h1>MyNetflix</h1>
     <div class="auth-icon">
+        <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+            <a href="admin.php" title="Panel de Administración">
+                <i class="fas fa-tools" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de herramientas -->
+            </a>
+        <?php endif; ?>    
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="logout.php" title="Cerrar Sesión">
                 <i class="fas fa-sign-out-alt" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de logout -->
             </a>
-            <?php if ($_SESSION['user_role'] === 'admin'): ?>
-                <a href="admin.php" title="Panel de Administración">
-                    <i class="fas fa-tools" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de herramientas -->
-                </a>
-            <?php endif; ?>
         <?php else: ?>
             <i class="fas fa-user" title="Iniciar Sesión" id="loginIcon" onclick="toggleModal()"></i> <!-- Ícono de login -->
         <?php endif; ?>
@@ -114,15 +197,28 @@ if (isset($_GET['filter'])) {
     <h2>Películas Disponibles</h2>
 
     <h3>Filtros</h3>
-    <select id="filter-like">
-        <option value="all">Todas</option>
-        <option value="liked">Películas que me gustan</option>
-        <option value="unliked">Películas que no me gustan</option>
-    </select>
+    <div class="filters-container">
+        <select id="filter-like" class="form-control">
+            <option value="all">Todas</option>
+            <option value="liked">Películas que me gustan</option>
+            <option value="unliked">Películas que no me gustan</option>
+        </select>
 
-    <input type="text" id="search-title" placeholder="Buscar por título">
-    <input type="text" id="search-director" placeholder="Buscar por director">
-    <input type="text" id="search-category" placeholder="Buscar por categoría">
+        <input type="text" id="search-title" class="form-control" placeholder="Buscar por título">
+        <input type="text" id="search-director" class="form-control" placeholder="Buscar por director">
+        <select id="search-category" class="form-control">
+            <option value="">Todas las categorías</option>
+            <?php while ($categoria = $categoriasResult->fetch(PDO::FETCH_ASSOC)): ?>
+                <option value="<?php echo htmlspecialchars($categoria['nombre']); ?>">
+                    <?php echo htmlspecialchars($categoria['nombre']); ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
+        <button id="clear-filters" class="btn btn-secondary">
+            <i class="fas fa-undo"></i> Limpiar filtros
+        </button>
+    </div>
+
     <div id="movies-container" class="grid">
     <!-- Aquí se llenarán las películas con AJAX -->
     <?php foreach ($moviesResult as $movie): ?>
@@ -157,9 +253,13 @@ if (isset($_GET['filter'])) {
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
         <h2>Iniciar Sesión</h2>
-        <form action="process_login.php" method="post">
+        <form id="loginForm" action="process_login.php" method="post">
             <input type="email" name="email" placeholder="Email" required>
+            <div class="error-message"></div>
+
             <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="error-message"></div>
+
             <button type="submit">Iniciar Sesión</button>
         </form>
         <p>¿No tienes una cuenta? <a href="#" onclick="openRegisterModal()">Regístrate aquí</a></p>
@@ -167,14 +267,20 @@ if (isset($_GET['filter'])) {
 </div>
 
 <!-- Modal de Registro -->
-<div id="registerModal" class="modal register-modal" style="display: none;">
+<div id="registerModal" class="modal register-modal" style="display: <?php echo $showRegisterModal ? 'block' : 'none'; ?>;">
     <div class="modal-content">
         <span class="close" onclick="closeModal('registerModal')">&times;</span>
         <h2>Registro</h2>
-        <form action="process_register.php" method="post">
-            <input type="text_registro" name="nombre" placeholder="Nombre" required>
-            <input type="email" name="email" placeholder="Email" required>
+        <form id="registerForm" action="process_register.php" method="post">
+            <input type="text" name="nombre" placeholder="Nombre" required value="<?php echo htmlspecialchars($_POST['nombre'] ?? '', ENT_QUOTES); ?>">
+            <div class="error-message"></div>
+
+            <input type="email" name="email" placeholder="Email" required value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES); ?>">
+            <div class="error-message"></div>
+
             <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="error-message"></div>
+
             <button type="submit">Registrar</button>
         </form>
         <p>¿Ya tienes una cuenta? <a href="#" onclick="openLoginModal()">Inicia sesión aquí</a></p>
@@ -207,5 +313,16 @@ if (isset($_GET['filter'])) {
 <script src="js/script.js"></script>
 <script src="js/like.js"></script>
 <script src="js/ajax.js"></script>
+<script>
+    // Llamar a esta función después de un registro exitoso
+    function onRegisterSuccess() {
+        showRegistrationAlert();
+    }
+
+    // Llamar a esta función después de un inicio de sesión exitoso
+    function onLoginSuccess(username) {
+        showLoginAlert(username);
+    }
+</script>
 </body>
 </html>

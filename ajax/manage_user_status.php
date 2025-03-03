@@ -1,8 +1,10 @@
 <?php
+session_start();
 require '../db/conexion.php';
 
 if (!isset($_GET['id']) || !isset($_GET['action'])) {
-    exit("ID o acción no proporcionada.");
+    echo "ID o acción no proporcionada.";
+    exit();
 }
 
 $id = $_GET['id'];
@@ -18,7 +20,8 @@ if ($action === 'activate') {
     $query = $pdo->prepare("DELETE FROM usuarios WHERE id = ?");
     $successMessage = "Usuario eliminado con éxito.";
 } else {
-    exit("Acción no válida.");
+    echo "Acción no válida.";
+    exit();
 }
 
 if ($query->execute([$id])) {

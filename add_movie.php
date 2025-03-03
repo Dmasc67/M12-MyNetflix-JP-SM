@@ -12,6 +12,8 @@ $categorias = $pdo->query("SELECT * FROM categorias")->fetchAll(PDO::FETCH_ASSOC
 $directores = $pdo->query("SELECT * FROM directores")->fetchAll(PDO::FETCH_ASSOC);
 $actores = $pdo->query("SELECT * FROM actores")->fetchAll(PDO::FETCH_ASSOC);
 
+$errors = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recoger datos del formulario
     $titulo = $_POST['titulo'];
@@ -22,58 +24,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $director_id = $_POST['director'];
     $actor_id = $_POST['actor'];
 
-    // Manejo de la carátula (subida de archivos)
-    if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
-        $target_dir = "./img/peliculas/"; // Carpeta donde se guardarán las imágenes
-        $target_file = $target_dir . basename($_FILES["caratula"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        // Validar el tipo de archivo
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-        if (!in_array($imageFileType, $allowed_types)) {
-            die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
-        }
-
-        // Validar el tamaño del archivo (por ejemplo, 5MB)
-        $max_size = 5 * 1024 * 1024; // 5MB
-        if ($_FILES["caratula"]["size"] > $max_size) {
-            die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
-        }
-
-        // Renombrar el archivo para evitar conflictos
-        $new_file_name = uniqid() . "." . $imageFileType; // Genera un nombre único
-        $target_file = $target_dir . $new_file_name;
-
-        // Mover el archivo subido a la carpeta de destino
-        if (move_uploaded_file($_FILES["caratula"]["tmp_name"], $target_file)) {
-            $caratula = $target_file; // Guarda la ruta del archivo en la base de datos
-        } else {
-            die("Error: Hubo un problema al subir el archivo.");
-        }
-    } else {
-        die("Error: No se ha subido ningún archivo o hubo un error en la subida.");
+    if (strlen($titulo) > 100) {
+        $errors['titulo'] = "El título no debe exceder los 100 caracteres.";
     }
 
-    // Insertar la película en la tabla `peliculas`
-    $query = "INSERT INTO peliculas (titulo, descripcion, año, duracion, caratula) VALUES (?, ?, ?, ?, ?)";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$titulo, $descripcion, $año, $duracion, $caratula]);
+    if (!preg_match('/^\d{4}$/', $año)) {
+        $errors['año'] = "El año debe ser un número de 4 dígitos.";
+    }
 
-    // Obtener el ID de la película recién insertada
-    $pelicula_id = $pdo->lastInsertId();
+    if (!preg_match('/^\d{1,3}$/', $duracion)) {
+        $errors['duracion'] = "La duración debe ser un número de hasta 3 dígitos.";
+    }
 
-    // Insertar relaciones en las tablas `pelicula_categoria`, `pelicula_director` y `pelicula_actor`
-    $stmt_categoria = $pdo->prepare("INSERT INTO pelicula_categoria (pelicula_id, categoria_id) VALUES (?, ?)");
-    $stmt_categoria->execute([$pelicula_id, $categoria_id]);
+    if (strlen($descripcion) > 240) {
+        $errors['descripcion'] = "La descripción no debe exceder los 240 caracteres.";
+    }
 
-    $stmt_director = $pdo->prepare("INSERT INTO pelicula_director (pelicula_id, director_id) VALUES (?, ?)");
-    $stmt_director->execute([$pelicula_id, $director_id]);
+    if (empty($errors)) {
+        // Manejo de la carátula (subida de archivos)
+        if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
+            $target_dir = "./img/peliculas/"; // Carpeta donde se guardarán las imágenes
+            $target_file = $target_dir . basename($_FILES["caratula"]["name"]);
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    $stmt_actor = $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)");
-    $stmt_actor->execute([$pelicula_id, $actor_id]);
+            // Validar el tipo de archivo
+            $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($imageFileType, $allowed_types)) {
+                die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
+            }
 
-    header("Location: admin.php"); // Redirige de vuelta al panel de administración
-    exit();
+            // Validar el tamaño del archivo (por ejemplo, 5MB)
+            $max_size = 5 * 1024 * 1024; // 5MB
+            if ($_FILES["caratula"]["size"] > $max_size) {
+                die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
+            }
+
+            // Renombrar el archivo para evitar conflictos
+            $new_file_name = uniqid() . "." . $imageFileType; // Genera un nombre único
+            $target_file = $target_dir . $new_file_name;
+
+            // Mover el archivo subido a la carpeta de destino
+            if (move_uploaded_file($_FILES["caratula"]["tmp_name"], $target_file)) {
+                $caratula = $target_file; // Guarda la ruta del archivo en la base de datos
+            } else {
+                die("Error: Hubo un problema al subir el archivo.");
+            }
+        } else {
+            die("Error: No se ha subido ningún archivo o hubo un error en la subida.");
+        }
+
+        // Insertar la película en la tabla `peliculas`
+        $query = "INSERT INTO peliculas (titulo, descripcion, año, duracion, caratula) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$titulo, $descripcion, $año, $duracion, $caratula]);
+
+        // Obtener el ID de la película recién insertada
+        $pelicula_id = $pdo->lastInsertId();
+
+        // Insertar relaciones en las tablas `pelicula_categoria`, `pelicula_director` y `pelicula_actor`
+        $stmt_categoria = $pdo->prepare("INSERT INTO pelicula_categoria (pelicula_id, categoria_id) VALUES (?, ?)");
+        $stmt_categoria->execute([$pelicula_id, $categoria_id]);
+
+        $stmt_director = $pdo->prepare("INSERT INTO pelicula_director (pelicula_id, director_id) VALUES (?, ?)");
+        $stmt_director->execute([$pelicula_id, $director_id]);
+
+        $stmt_actor = $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)");
+        $stmt_actor->execute([$pelicula_id, $actor_id]);
+
+        header("Location: admin.php"); // Redirige de vuelta al panel de administración
+        exit();
+    }
 }
 ?>
 
@@ -87,6 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/stylesadmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>MyNetflix - Añadir Película</h1>
@@ -103,17 +130,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form action="add_movie.php" method="post" enctype="multipart/form-data" class="container mt-4">
         <div class="form-group">
             <label for="titulo">Título:</label>
-            <input type="text" name="titulo" id="titulo" class="form-control" required>
+            <input type="text" name="titulo" id="titulo" class="form-control" required value="<?php echo htmlspecialchars($titulo ?? ''); ?>">
+            <div id="titulo-error" class="error-message"><?php echo $errors['titulo'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="descripcion">Descripción:</label>
-            <textarea name="descripcion" id="descripcion" class="form-control" required></textarea>
+            <textarea name="descripcion" id="descripcion" class="form-control" required><?php echo htmlspecialchars($descripcion ?? ''); ?></textarea>
+            <div id="descripcion-error" class="error-message"><?php echo $errors['descripcion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="año">Año:</label>
-            <input type="number" name="año" id="año" class="form-control" required>
+            <input type="number" name="año" id="año" class="form-control" required value="<?php echo htmlspecialchars($año ?? ''); ?>">
+            <div id="año-error" class="error-message"><?php echo $errors['año'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
@@ -121,11 +151,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <select name="categoria" id="categoria" class="form-control" required>
                 <option value="" disabled selected>Seleccione una categoría</option>
                 <?php foreach ($categorias as $categoria): ?>
-                    <option value="<?php echo $categoria['id']; ?>">
+                    <option value="<?php echo $categoria['id']; ?>" <?php echo (isset($categoria_id) && $categoria_id == $categoria['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($categoria['nombre']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div id="categoria-error" class="error-message"></div>
         </div>
 
         <div class="form-group">
@@ -133,11 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <select name="director" id="director" class="form-control" required>
                 <option value="" disabled selected>Seleccione un director</option>
                 <?php foreach ($directores as $director): ?>
-                    <option value="<?php echo $director['id']; ?>">
+                    <option value="<?php echo $director['id']; ?>" <?php echo (isset($director_id) && $director_id == $director['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($director['nombre']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div id="director-error" class="error-message"></div>
         </div>
 
         <div class="form-group">
@@ -145,25 +177,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <select name="actor" id="actor" class="form-control" required>
                 <option value="" disabled selected>Seleccione un actor</option>
                 <?php foreach ($actores as $actor): ?>
-                    <option value="<?php echo $actor['id']; ?>">
+                    <option value="<?php echo $actor['id']; ?>" <?php echo (isset($actor_id) && $actor_id == $actor['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($actor['nombre']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div id="actor-error" class="error-message"></div>
         </div>
 
         <div class="form-group">
             <label for="duracion">Duración (minutos):</label>
-            <input type="number" name="duracion" id="duracion" class="form-control" required>
+            <input type="number" name="duracion" id="duracion" class="form-control" required value="<?php echo htmlspecialchars($duracion ?? ''); ?>">
+            <div id="duracion-error" class="error-message"><?php echo $errors['duracion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="caratula">Carátula:</label>
             <input type="file" name="caratula" id="caratula" class="form-control" accept=".jpg,.jpeg,.png,.gif" required>
+            <div id="caratula-error" class="error-message"></div>
         </div>
 
         <button type="submit" class="btn btn-primary">Añadir Película</button>
     </form>
     <br>
+    <script src="validacion.js"></script>
 </body>
 </html>

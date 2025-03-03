@@ -49,7 +49,6 @@ if (isset($_GET['id'])) {
 
 // Procesar el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Procesar otros campos del formulario
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $año = $_POST['año'];
@@ -58,55 +57,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $director = $_POST['director'];
     $actor = $_POST['actor'];
 
-    // Manejo de la carátula
-    if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
-        $target_dir = "./img/peliculas/"; // Carpeta donde se guardarán las imágenes
-        $fileTmpPath = $_FILES['caratula']['tmp_name'];
-        $fileName = $_FILES['caratula']['name'];
-        $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    // Validaciones del lado del servidor
+    $errors = [];
 
-        // Validar el tipo de archivo
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-        if (!in_array($imageFileType, $allowed_types)) {
-            die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
+    if (strlen($titulo) > 100) {
+        $errors['titulo'] = "El título no debe exceder los 100 caracteres.";
+    }
+
+    if (strlen($descripcion) > 240) {
+        $errors['descripcion'] = "La descripción no debe exceder los 240 caracteres.";
+    }
+
+    if (!preg_match('/^\d{4}$/', $año)) {
+        $errors['año'] = "El año debe ser un número de 4 dígitos.";
+    }
+
+    if (!preg_match('/^\d{1,3}$/', $duracion)) {
+        $errors['duracion'] = "La duración debe ser un número de hasta 3 dígitos.";
+    }
+
+    if (empty($errors)) {
+        $updateQuery = "UPDATE peliculas SET titulo = ?, descripcion = ?, año = ?, duracion = ?";
+        $params = [$titulo, $descripcion, $año, $duracion];
+
+        // Manejo de la carátula
+        if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
+            $target_dir = "./img/peliculas/";
+            $fileTmpPath = $_FILES['caratula']['tmp_name'];
+            $fileName = $_FILES['caratula']['name'];
+            $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+            $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($imageFileType, $allowed_types)) {
+                die("Error: Solo se permiten archivos JPG, JPEG, PNG y GIF.");
+            }
+
+            $max_size = 5 * 1024 * 1024;
+            if ($_FILES["caratula"]["size"] > $max_size) {
+                die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
+            }
+
+            $new_file_name = uniqid() . "." . $imageFileType;
+            $target_file = $target_dir . $new_file_name;
+
+            if (move_uploaded_file($fileTmpPath, $target_file)) {
+                $updateQuery .= ", caratula = ?";
+                $params[] = $target_file;
+            } else {
+                echo "Error al mover el archivo.";
+            }
         }
 
-        // Validar el tamaño del archivo (por ejemplo, 5MB)
-        $max_size = 5 * 1024 * 1024; // 5MB
-        if ($_FILES["caratula"]["size"] > $max_size) {
-            die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
-        }
+        $updateQuery .= " WHERE id = ?";
+        $params[] = $movieId;
 
-        // Renombrar el archivo para evitar conflictos
-        $new_file_name = uniqid() . "." . $imageFileType; // Genera un nombre único
-        $target_file = $target_dir . $new_file_name;
+        $stmt = $pdo->prepare($updateQuery);
+        $stmt->execute($params);
 
-        // Mover el archivo subido a la carpeta de destino
-        if (move_uploaded_file($fileTmpPath, $target_file)) {
-            // Actualizar la película
-            $updateQuery = "UPDATE peliculas SET titulo = ?, descripcion = ?, año = ?, duracion = ?, caratula = ? WHERE id = ?";
-            $stmt = $pdo->prepare($updateQuery);
-            $stmt->execute([$titulo, $descripcion, $año, $duracion, $target_file, $movieId]);
+        $pdo->prepare("DELETE FROM pelicula_categoria WHERE pelicula_id = ?")->execute([$movieId]);
+        $pdo->prepare("DELETE FROM pelicula_director WHERE pelicula_id = ?")->execute([$movieId]);
+        $pdo->prepare("DELETE FROM pelicula_actor WHERE pelicula_id = ?")->execute([$movieId]);
 
-            // Actualizar las relaciones en las tablas intermedias
-            // 1. Eliminar las relaciones antiguas
-            $pdo->prepare("DELETE FROM pelicula_categoria WHERE pelicula_id = ?")->execute([$movieId]);
-            $pdo->prepare("DELETE FROM pelicula_director WHERE pelicula_id = ?")->execute([$movieId]);
-            $pdo->prepare("DELETE FROM pelicula_actor WHERE pelicula_id = ?")->execute([$movieId]);
+        $pdo->prepare("INSERT INTO pelicula_categoria (pelicula_id, categoria_id) VALUES (?, ?)")->execute([$movieId, $categoria]);
+        $pdo->prepare("INSERT INTO pelicula_director (pelicula_id, director_id) VALUES (?, ?)")->execute([$movieId, $director]);
+        $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)")->execute([$movieId, $actor]);
 
-            // 2. Insertar las nuevas relaciones
-            $pdo->prepare("INSERT INTO pelicula_categoria (pelicula_id, categoria_id) VALUES (?, ?)")->execute([$movieId, $categoria]);
-            $pdo->prepare("INSERT INTO pelicula_director (pelicula_id, director_id) VALUES (?, ?)")->execute([$movieId, $director]);
-            $pdo->prepare("INSERT INTO pelicula_actor (pelicula_id, actor_id) VALUES (?, ?)")->execute([$movieId, $actor]);
-
-            // Redirigir a admin.php después de la actualización
-            header("Location: admin.php");
-            exit(); // Asegurarse de que no se ejecute más código después de la redirección
-        } else {
-            echo "Error al mover el archivo.";
-        }
-    } else {
-        echo "Error en la carga del archivo.";
+        header("Location: admin.php");
+        exit();
     }
 }
 ?>
@@ -121,33 +138,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/stylesadmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-<h1>MyNetflix - Modificar Película</h1>
+    <h1>MyNetflix - Modificar Película</h1>
     <div class="auth-icon">
-    <?php if ($_SESSION['user_role'] === 'admin'): ?>
-                <a href="admin.php" title="Volver a Administración">
-                    <i class="fas fa-arrow-left" style="font-size: 30px; color: #fff;"></i> <!-- Ícono de volver atrás -->
-                </a>
-            <?php endif; ?>
+        <?php if ($_SESSION['user_role'] === 'admin'): ?>
+            <a href="admin.php" title="Volver a Administración">
+                <i class="fas fa-arrow-left" style="font-size: 30px; color: #fff;"></i>
+            </a>
+        <?php endif; ?>
     </div>
-</div>
+    </div>
 
     <h2>Modificar Película - <?php echo $movie['titulo']; ?></h2>
     <form action="edit_movie.php?id=<?php echo $movieId; ?>" method="post" enctype="multipart/form-data" class="container mt-4">
         <div class="form-group">
             <label for="titulo">Título:</label>
             <input type="text" name="titulo" id="titulo" class="form-control" value="<?php echo $movie['titulo']; ?>" required>
+            <div id="titulo-error" class="error-message"><?php echo $errors['titulo'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="descripcion">Descripción:</label>
-            <input type="text" name="descripcion" id="descripcion" class="form-control" value="<?php echo $movie['descripcion']; ?>" required>
+            <textarea name="descripcion" id="descripcion" class="form-control" required><?php echo $movie['descripcion']; ?></textarea>
+            <div id="descripcion-error" class="error-message"><?php echo $errors['descripcion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="año">Año:</label>
             <input type="number" name="año" id="año" class="form-control" value="<?php echo $movie['año']; ?>" required>
+            <div id="año-error" class="error-message"><?php echo $errors['año'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
@@ -160,6 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div id="categoria-error" class="error-message"></div>
         </div>
 
         <div class="form-group">
@@ -172,6 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div id="director-error" class="error-message"></div>
         </div>
 
         <div class="form-group">
@@ -184,20 +213,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div id="actor-error" class="error-message"></div>
         </div>
 
         <div class="form-group">
             <label for="duracion">Duración (minutos):</label>
             <input type="number" name="duracion" id="duracion" class="form-control" value="<?php echo $movie['duracion']; ?>" required>
+            <div id="duracion-error" class="error-message"><?php echo $errors['duracion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="caratula">Carátula:</label>
-            <input type="file" name="caratula" id="caratula" class="form-control" required>
+            <input type="file" name="caratula" id="caratula" class="form-control" accept=".jpg,.jpeg,.png,.gif">
+            <div id="caratula-error" class="error-message"></div>
         </div>
 
         <button type="submit" class="btn btn-primary">Actualizar Película</button>
     </form>
-    </br>
+    <br>
+    <script src="validacion.js"></script>
 </body>
 </html> 
