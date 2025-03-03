@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.reload(); // Recarga la página o redirige a otra página
                     }, 3000);
                 } else {
+                    // Muestra el SweetAlert de error
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -71,4 +72,43 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error:', error));
         });
     }
-}); 
+});
+
+function showPendingValidationAlert() {
+    Swal.fire({
+        title: 'Validación Pendiente',
+        text: 'Tu cuenta está pendiente de validación por un administrador. Por favor, espera a que sea validada.',
+        icon: 'info',
+        confirmButtonText: 'Entendido',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'logout.php';
+        }
+    });
+}
+
+function showEmailNotRegisteredAlert() {
+    Swal.fire({
+        title: 'Correo No Registrado',
+        text: 'El correo ingresado no está registrado en nuestra web.',
+        icon: 'error',
+        confirmButtonText: 'Entendido'
+    });
+}
+
+function showInactiveUserAlert() {
+    Swal.fire({
+        title: 'Usuario Inactivo',
+        text: 'Tu cuenta ha sido desactivada por un administrador. Por favor, contacta al soporte si tienes dudas.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'logout.php';
+        }
+    });
+} 

@@ -8,8 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validaciones del lado del servidor
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['error_message'] = 'El email no es válido.';
-        header("Location: index.php");
+        echo json_encode(['status' => 'error', 'message' => 'El email no es válido.']);
         exit();
     }
 
@@ -19,14 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if (!$user) {
+        echo json_encode(['status' => 'error', 'message' => 'El correo ingresado no está registrado en nuestra web.']);
+        exit();
+    }
+
     if ($user && password_verify($password, $user['password'])) {
         if ($user['estado'] === 'pendiente') {
-            $_SESSION['error_message'] = 'Tu solicitud aún está pendiente. Por favor, espera la activación de tu cuenta.';
-            header("Location: index.php");
+            echo json_encode(['status' => 'error', 'message' => 'Tu cuenta está pendiente de validación por un administrador.']);
             exit();
         } elseif ($user['estado'] === 'inactivo') {
-            $_SESSION['error_message'] = 'Tu cuenta ha sido desactivada. Contacta al administrador.';
-            header("Location: index.php");
+            echo json_encode(['status' => 'error', 'message' => 'Tu cuenta ha sido desactivada. Contacta al administrador.']);
             exit();
         }
         $_SESSION['user_id'] = $user['id'];

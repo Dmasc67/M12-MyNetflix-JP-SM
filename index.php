@@ -78,6 +78,18 @@ if (isset($_GET['filter'])) {
 // Obtener categorías para el filtro
 $categoriasQuery = "SELECT * FROM categorias ORDER BY nombre";
 $categoriasResult = $pdo->query($categoriasQuery);
+
+// Verificar el estado del usuario y mostrar alertas
+if (isset($_SESSION['user_id'])) {
+    $userStatus = $_SESSION['user_status'] ?? 'pendiente';
+    echo "<script>";
+    if ($userStatus === 'pendiente') {
+        echo "showPendingValidationAlert();";
+    } elseif ($userStatus === 'inactivo') {
+        echo "showInactiveUserAlert();";
+    }
+    echo "</script>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">

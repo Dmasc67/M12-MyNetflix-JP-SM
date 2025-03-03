@@ -13,7 +13,7 @@ function showLoginAlert(username) {
     Swal.fire({
         icon: 'success',
         title: 'Inicio de sesión exitoso',
-        text: `Bienvenido, ${username}!`,
+        text: `Bienvenido/a, ${username}!`,
         confirmButtonText: 'Aceptar'
     });
 }
