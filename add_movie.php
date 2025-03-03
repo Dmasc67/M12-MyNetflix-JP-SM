@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = $_POST['descripcion'];
     $año = $_POST['año'];
     $duracion = $_POST['duracion'];
-    $categoria_id = $_POST['categoria'];
-    $director_id = $_POST['director'];
-    $actor_id = $_POST['actor'];
+    $categoria_id = isset($_POST['categoria']) ? $_POST['categoria'] : null;
+    $director_id = isset($_POST['director']) ? $_POST['director'] : null;
+    $actor_id = isset($_POST['actor']) ? $_POST['actor'] : null;
 
     if (strlen($titulo) > 100) {
         $errors['titulo'] = "El título no debe exceder los 100 caracteres.";
@@ -40,9 +40,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['descripcion'] = "La descripción no debe exceder los 240 caracteres.";
     }
 
+    if (empty($titulo)) {
+        $errors['titulo'] = "El título es obligatorio.";
+    }
+
+    if (empty($descripcion)) {
+        $errors['descripcion'] = "La descripción es obligatoria.";
+    }
+
+    if (empty($año) || !preg_match('/^\d{4}$/', $año)) {
+        $errors['año'] = "El año debe ser un número de 4 dígitos.";
+    }
+
+    if (empty($duracion) || !preg_match('/^\d{1,3}$/', $duracion)) {
+        $errors['duracion'] = "La duración debe ser un número de hasta 3 dígitos.";
+    }
+
+    if (empty($categoria_id)) {
+        $errors['categoria'] = "Debe seleccionar una categoría.";
+    }
+
+    if (empty($director_id)) {
+        $errors['director'] = "Debe seleccionar un director.";
+    }
+
+    if (empty($actor_id)) {
+        $errors['actor'] = "Debe seleccionar un actor.";
+    }
+
     if (empty($errors)) {
-        // Manejo de la carátula (subida de archivos)
-        if (isset($_FILES['caratula']) && $_FILES['caratula']['error'] === UPLOAD_ERR_OK) {
+        // Validar que se haya subido una imagen
+        if (!isset($_FILES['caratula']) || $_FILES['caratula']['error'] !== UPLOAD_ERR_OK) {
+            $errors['caratula'] = "Debe subir una imagen.";
+        } else {
+            // Manejo de la carátula (subida de archivos)
             $target_dir = "./img/peliculas/"; // Carpeta donde se guardarán las imágenes
             $target_file = $target_dir . basename($_FILES["caratula"]["name"]);
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -69,8 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 die("Error: Hubo un problema al subir el archivo.");
             }
-        } else {
-            die("Error: No se ha subido ningún archivo o hubo un error en la subida.");
         }
 
         // Insertar la película en la tabla `peliculas`
@@ -130,25 +159,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form action="add_movie.php" method="post" enctype="multipart/form-data" class="container mt-4">
         <div class="form-group">
             <label for="titulo">Título:</label>
-            <input type="text" name="titulo" id="titulo" class="form-control" required value="<?php echo htmlspecialchars($titulo ?? ''); ?>">
+            <input type="text" name="titulo" id="titulo" class="form-control" value="<?php echo htmlspecialchars($titulo ?? ''); ?>">
             <div id="titulo-error" class="error-message"><?php echo $errors['titulo'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="descripcion">Descripción:</label>
-            <textarea name="descripcion" id="descripcion" class="form-control" required><?php echo htmlspecialchars($descripcion ?? ''); ?></textarea>
+            <textarea name="descripcion" id="descripcion" class="form-control"><?php echo htmlspecialchars($descripcion ?? ''); ?></textarea>
             <div id="descripcion-error" class="error-message"><?php echo $errors['descripcion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="año">Año:</label>
-            <input type="number" name="año" id="año" class="form-control" required value="<?php echo htmlspecialchars($año ?? ''); ?>">
+            <input type="number" name="año" id="año" class="form-control" value="<?php echo htmlspecialchars($año ?? ''); ?>">
             <div id="año-error" class="error-message"><?php echo $errors['año'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="categoria">Categoría:</label>
-            <select name="categoria" id="categoria" class="form-control" required>
+            <select name="categoria" id="categoria" class="form-control">
                 <option value="" disabled selected>Seleccione una categoría</option>
                 <?php foreach ($categorias as $categoria): ?>
                     <option value="<?php echo $categoria['id']; ?>" <?php echo (isset($categoria_id) && $categoria_id == $categoria['id']) ? 'selected' : ''; ?>>
@@ -156,12 +185,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div id="categoria-error" class="error-message"></div>
+            <div id="categoria-error" class="error-message"><?php echo $errors['categoria'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="director">Director:</label>
-            <select name="director" id="director" class="form-control" required>
+            <select name="director" id="director" class="form-control">
                 <option value="" disabled selected>Seleccione un director</option>
                 <?php foreach ($directores as $director): ?>
                     <option value="<?php echo $director['id']; ?>" <?php echo (isset($director_id) && $director_id == $director['id']) ? 'selected' : ''; ?>>
@@ -169,12 +198,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div id="director-error" class="error-message"></div>
+            <div id="director-error" class="error-message"><?php echo $errors['director'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="actor">Actor:</label>
-            <select name="actor" id="actor" class="form-control" required>
+            <select name="actor" id="actor" class="form-control">
                 <option value="" disabled selected>Seleccione un actor</option>
                 <?php foreach ($actores as $actor): ?>
                     <option value="<?php echo $actor['id']; ?>" <?php echo (isset($actor_id) && $actor_id == $actor['id']) ? 'selected' : ''; ?>>
@@ -182,19 +211,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div id="actor-error" class="error-message"></div>
+            <div id="actor-error" class="error-message"><?php echo $errors['actor'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="duracion">Duración (minutos):</label>
-            <input type="number" name="duracion" id="duracion" class="form-control" required value="<?php echo htmlspecialchars($duracion ?? ''); ?>">
+            <input type="number" name="duracion" id="duracion" class="form-control" value="<?php echo htmlspecialchars($duracion ?? ''); ?>">
             <div id="duracion-error" class="error-message"><?php echo $errors['duracion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="caratula">Carátula:</label>
-            <input type="file" name="caratula" id="caratula" class="form-control" accept=".jpg,.jpeg,.png,.gif" required>
-            <div id="caratula-error" class="error-message"></div>
+            <input type="file" name="caratula" id="caratula" class="form-control" accept=".jpg,.jpeg,.png,.gif">
+            <div id="caratula-error" class="error-message"><?php echo $errors['caratula'] ?? ''; ?></div>
         </div>
 
         <button type="submit" class="btn btn-primary">Añadir Película</button>

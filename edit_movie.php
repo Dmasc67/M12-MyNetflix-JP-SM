@@ -161,38 +161,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form action="edit_movie.php?id=<?php echo $movieId; ?>" method="post" enctype="multipart/form-data" class="container mt-4">
         <div class="form-group">
             <label for="titulo">Título:</label>
-            <input type="text" name="titulo" id="titulo" class="form-control" value="<?php echo $movie['titulo']; ?>" required>
+            <input type="text" name="titulo" id="titulo" class="form-control" value="<?php echo $movie['titulo']; ?>">
             <div id="titulo-error" class="error-message"><?php echo $errors['titulo'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="descripcion">Descripción:</label>
-            <textarea name="descripcion" id="descripcion" class="form-control" required><?php echo $movie['descripcion']; ?></textarea>
+            <textarea name="descripcion" id="descripcion" class="form-control"><?php echo $movie['descripcion']; ?></textarea>
             <div id="descripcion-error" class="error-message"><?php echo $errors['descripcion'] ?? ''; ?></div>
         </div>
         
         <div class="form-group">
             <label for="año">Año:</label>
-            <input type="number" name="año" id="año" class="form-control" value="<?php echo $movie['año']; ?>" required>
+            <input type="number" name="año" id="año" class="form-control" value="<?php echo $movie['año']; ?>">
             <div id="año-error" class="error-message"><?php echo $errors['año'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="categoria">Categoría:</label>
-            <select name="categoria" id="categoria" class="form-control" required>
-                <option value="" disabled>Seleccione una categoría</option>
+            <select name="categoria" id="categoria" class="form-control">
+                <option value="" disabled selected>Seleccione una categoría</option>
                 <?php foreach ($categorias as $categoria): ?>
                     <option value="<?php echo $categoria['id']; ?>" <?php echo in_array($categoria['id'], explode(',', $movie['categoria_ids'])) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($categoria['nombre']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div id="categoria-error" class="error-message"></div>
+            <div id="categoria-error" class="error-message"><?php echo $errors['categoria'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="director">Director:</label>
-            <select name="director" id="director" class="form-control" required>
+            <select name="director" id="director" class="form-control">
                 <option value="" disabled>Seleccione un director</option>
                 <?php foreach ($directores as $director): ?>
                     <option value="<?php echo $director['id']; ?>" <?php echo in_array($director['id'], explode(',', $movie['director_ids'])) ? 'selected' : ''; ?>>
@@ -200,12 +200,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div id="director-error" class="error-message"></div>
+            <div id="director-error" class="error-message"><?php echo $errors['director'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="actor">Actor:</label>
-            <select name="actor" id="actor" class="form-control" required>
+            <select name="actor" id="actor" class="form-control">
                 <option value="" disabled>Seleccione un actor</option>
                 <?php foreach ($actores as $actor): ?>
                     <option value="<?php echo $actor['id']; ?>" <?php echo in_array($actor['id'], explode(',', $movie['actor_ids'])) ? 'selected' : ''; ?>>
@@ -213,12 +213,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div id="actor-error" class="error-message"></div>
+            <div id="actor-error" class="error-message"><?php echo $errors['actor'] ?? ''; ?></div>
         </div>
 
         <div class="form-group">
             <label for="duracion">Duración (minutos):</label>
-            <input type="number" name="duracion" id="duracion" class="form-control" value="<?php echo $movie['duracion']; ?>" required>
+            <input type="number" name="duracion" id="duracion" class="form-control" value="<?php echo $movie['duracion']; ?>">
             <div id="duracion-error" class="error-message"><?php echo $errors['duracion'] ?? ''; ?></div>
         </div>
         

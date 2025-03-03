@@ -32,6 +32,32 @@ document.addEventListener('DOMContentLoaded', function() {
             valid = false;
         }
 
+        // Validar campos de selección múltiple
+        const categoria = document.getElementById('categoria').value;
+        if (categoria === "") {
+            errors['categoria'] = "Debe seleccionar una categoría.";
+            valid = false;
+        }
+
+        const director = document.getElementById('director').value;
+        if (director === "") {
+            errors['director'] = "Debe seleccionar un director.";
+            valid = false;
+        }
+
+        const actor = document.getElementById('actor').value;
+        if (actor === "") {
+            errors['actor'] = "Debe seleccionar un actor.";
+            valid = false;
+        }
+
+        // Validar que se haya subido una imagen
+        const caratula = document.getElementById('caratula').files.length;
+        if (caratula === 0) {
+            errors['caratula'] = "Debe subir una imagen.";
+            valid = false;
+        }
+
         // Mostrar errores
         for (const field in errors) {
             const errorElement = document.getElementById(field + '-error');
