@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🎥 **MyNetflix**  
 *Activitat 9 - Disseny i Desenvolupament d'una Plataforma de Vídeo en Streaming*  
 
